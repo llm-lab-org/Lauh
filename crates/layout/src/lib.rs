@@ -3543,7 +3543,7 @@ fn place_outline_para(ctx: &mut Ctx, pb: &mut PageBuilder, p: &Paragraph, block:
         let w = (pb.col_w() - indent - outline::SYMBOL_W).max(72.0);
         (pb.col_x() + indent + outline::SYMBOL_W, w)
     };
-    let q = outline::outline_para(ctx.doc, p, o.view.plain);
+    let q = outline::outline_para(ctx.doc, p, o.view.plain, rtl);
     ctx.fields.page = pb.number;
     let pl = ctx.para_labelled(&q, width, None, &[], label);
     pb.y += pl.rp.space_before.max(0.0);

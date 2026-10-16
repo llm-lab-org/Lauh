@@ -132,15 +132,18 @@ fn plain_chars(c: &CharProps) -> CharProps {
 }
 
 /// The paragraph as the outline draws it: no indents, start-aligned, and in the Normal style
-/// without text formatting (`plain`). RTL (bidi) paragraphs keep their direction and are
-/// right-aligned so Arabic/Persian headings read naturally in the outline.
-pub(crate) fn outline_para(doc: &Document, p: &Paragraph, plain: bool) -> Paragraph {
+/// without text formatting (`plain`). RTL paragraphs (explicit `bidi` or detected from the text)
+/// get bidi flag + right alignment so Arabic/Persian lines up naturally in the outline.
+pub(crate) fn outline_para(doc: &Document, p: &Paragraph, plain: bool, rtl: bool) -> Paragraph {
+    let _ = doc;
     let mut q = p.clone();
     q.props.indent_left = Some(0.0);
     q.props.indent_right = Some(0.0);
     q.props.indent_first = Some(0.0);
-    let rp = doc.styles.resolve_para(&p.props);
-    q.props.align = Some(if rp.bidi { Align::Right } else { Align::Left });
+    q.props.align = Some(if rtl { Align::Right } else { Align::Left });
+    if rtl {
+        q.props.bidi = Some(true);
+    }
     q.props.page_break_before = Some(false);
     q.props.drop_cap = None;
     if plain {
