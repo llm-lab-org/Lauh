@@ -1,0 +1,12 @@
+[Unit]
+Description=lauh.llm-lab.org — pull main and reconcile the stack
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/services/lauh
+ExecStart=/usr/bin/env bash /root/services/lauh/deploy/lauh/autodeploy.sh
+# journalctl -t lauh-autodeploy for logs
+StandardOutput=journal
+StandardError=journal

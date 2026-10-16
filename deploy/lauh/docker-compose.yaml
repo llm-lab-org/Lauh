@@ -1,0 +1,29 @@
+# lauh.llm-lab.org — static WASM site, fronted by Traefik.
+# Runs alongside bayan (and the other services) on the llmlab host (136.243.60.245).
+# Everything is namespaced under `lauh_` so nothing collides with existing stacks.
+# No ports are exposed on the host — Traefik reaches the container via the shared
+# `traefik_proxy` network.
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/lauh/Dockerfile
+    image: lauh_web:local
+    container_name: lauh_web
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_proxy"
+      - "traefik.http.routers.lauh_web.rule=Host(`lauh.llm-lab.org`)"
+      - "traefik.http.routers.lauh_web.entrypoints=websecure"
+      - "traefik.http.routers.lauh_web.tls=true"
+      - "traefik.http.routers.lauh_web.tls.certresolver=myresolver"
+      - "traefik.http.services.lauh_web.loadbalancer.server.port=8080"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    name: traefik_proxy
+    external: true

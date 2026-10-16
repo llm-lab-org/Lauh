@@ -1,0 +1,12 @@
+[Unit]
+Description=Poll llm-lab-org/Lauh:main every 5 minutes and redeploy on new commits
+
+[Timer]
+# First run 60s after boot, then every 5 minutes.
+OnBootSec=60s
+OnUnitActiveSec=5min
+Unit=lauh-autodeploy.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

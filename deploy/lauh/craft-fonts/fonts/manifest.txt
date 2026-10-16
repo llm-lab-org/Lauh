@@ -1,0 +1,126 @@
+# craft-fonts manifest (local checkout for WordCraft Arabic/Persian bundle).
+# Format: family | style | file (relative to CRAFT_FONTS_DIR) | scripts (ISO 15924, comma-separated)
+# All fonts here are SIL Open Font License 1.1. Files are symlinks into
+# /Users/ehsan/projects/ADIP-Naqsh/fonts/files/ — originals live in ADIP-Naqsh.
+# License status taken from docs/arabic-type-taxonomy.yaml (availability_status: open_source_downloadable).
+
+# Arabic text / Naskh
+Amiri                | Regular | fonts/amiri/Amiri-Regular.ttf                     | Arab, Latn
+Amiri                | Bold    | fonts/amiri/Amiri-Bold.ttf                        | Arab, Latn
+Amiri Quran          | Regular | fonts/amiriquran/AmiriQuran-Regular.ttf           | Arab
+Scheherazade New     | Regular | fonts/scheherazade/ScheherazadeNew-Regular.ttf    | Arab
+Noto Naskh Arabic    | Regular | fonts/noto/NotoNaskhArabic-Regular.ttf            | Arab
+Lateef               | Regular | fonts/lateef/Lateef-Regular.ttf                   | Arab
+Harmattan            | Regular | fonts/harmattan/Harmattan-Regular.ttf             | Arab
+
+# Modern Arabic sans
+Cairo                | Regular | fonts/cairo/Cairo-Regular.ttf                     | Arab, Latn
+Tajawal              | Regular | fonts/tajawal/Tajawal-Regular.ttf                 | Arab, Latn
+Almarai              | Regular | fonts/almarai/Almarai-Regular.ttf                 | Arab
+Changa               | Regular | fonts/changa/Changa-Regular.ttf                   | Arab, Latn
+El Messiri           | Regular | fonts/elmessiri/ElMessiri-Regular.ttf             | Arab, Latn
+IBM Plex Sans Arabic | Regular | fonts/ibmplexsansarabic/IBMPlexSansArabic-Regular.ttf | Arab, Latn
+Mada                 | Regular | fonts/mada/Mada-Regular.ttf                       | Arab
+Baloo Bhaijaan 2     | Regular | fonts/baloobhaijaan2/BalooBhaijaan2-Regular.ttf   | Arab, Latn
+Lemonada             | Regular | fonts/lemonada/Lemonada-Regular.ttf               | Arab, Latn
+Readex Pro           | Regular | fonts/readexpro/ReadexPro-Regular.ttf             | Arab, Latn
+Noto Sans Arabic     | Regular | fonts/notosansarabic/NotoSansArabic-Regular.ttf   | Arab
+
+# Kufi
+Reem Kufi            | Regular | fonts/reem-kufi/ReemKufi-Regular.ttf              | Arab
+Rakkas               | Regular | fonts/rakkas/Rakkas-Regular.ttf                   | Arab
+
+# Ruqah
+Aref Ruqaa           | Regular | fonts/aref-ruqaa/ArefRuqaa-Regular.ttf            | Arab
+Aref Ruqaa Ink       | Regular | fonts/aref-ruqaa-ink/ArefRuqaaInk-Regular.ttf     | Arab
+
+# Persian / Urdu
+Lalezar              | Regular | fonts/lalezar/Lalezar-Regular.ttf                 | Arab
+Markazi Text         | Regular | fonts/markazitext/MarkaziText-Regular.ttf         | Arab
+Mirza                | Regular | fonts/mirza/Mirza-Regular.ttf                     | Arab
+Noto Nastaliq Urdu   | Regular | fonts/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf | Arab
+
+# Hadith (used by HadithTitle, Hadith Reference, Hadith Narrator, Arabic Text styles)
+Niloufaraneh         | Regular | fonts/niloufaraneh/Niloufaraneh-Regular.ttf       | Arab
+Niloufaraneh         | Bold    | fonts/niloufaraneh/Niloufaraneh-Bold.ttf          | Arab
+
+# Latin fallback
+Noto Sans            | Regular | fonts/noto/NotoSans-Regular.ttf                   | Latn
+A Hakim Ghazali                      | Regular | fonts/arabic-collection/a-hakim-ghazali.ttf | Arab
+A Thuluth                            | Regular | fonts/arabic-collection/a-thuluth.ttf | Arab
+Adobe Naskh Medium                   | Regular | fonts/arabic-collection/adobe-naskh-medium.ttf | Arab
+AE Arab                              | Regular | fonts/arabic-collection/ae-arab.ttf | Arab
+AE Haramain                          | Regular | fonts/arabic-collection/ae-haramain.ttf | Arab
+AH Al Kofi                           | Regular | fonts/arabic-collection/ah-al-kofi.ttf | Arab
+AL Gemah Assarim                     | Regular | fonts/arabic-collection/al-gemah-assarim.ttf | Arab
+Alnaqaya R                           | Regular | fonts/arabic-collection/alnaqaya-r.ttf | Arab
+Alnaqaya S                           | Regular | fonts/arabic-collection/alnaqaya-s.ttf | Arab
+Ammanv3 Serif Bold Italic            | Regular | fonts/arabic-collection/ammanv3-serif-bold-italic.ttf | Arab
+Aref Lamsa                           | Regular | fonts/arabic-collection/aref-lamsa.ttf | Arab
+Aref Ruqaa Ink                       | Regular | fonts/arabic-collection/aref-ruqaa-ink.ttf | Arab
+Aref Ruqrq Bold                      | Regular | fonts/arabic-collection/aref-ruqrq-bold.ttf | Arab
+Aref Ruqrq                           | Regular | fonts/arabic-collection/aref-ruqrq.ttf | Arab
+AZ Topaz                             | Regular | fonts/arabic-collection/az-topaz.ttf | Arab
+B Arabic Style                       | Regular | fonts/arabic-collection/b-arabic-style.ttf | Arab
+B Koodak Outline                     | Regular | fonts/arabic-collection/b-koodak-outline.ttf | Arab
+B Piramooz B1                        | Regular | fonts/arabic-collection/b-piramooz-b1.ttf | Arab
+B Sepideh Outline                    | Regular | fonts/arabic-collection/b-sepideh-outline.ttf | Arab
+B Sepideh                            | Regular | fonts/arabic-collection/b-sepideh.ttf | Arab
+B Yekan                              | Regular | fonts/arabic-collection/b-yekan.ttf | Arab
+Bader Al Yadawi                      | Regular | fonts/arabic-collection/bader-al-yadawi.ttf | Arab
+Barada Reqa                          | Regular | fonts/arabic-collection/barada-reqa.ttf | Arab
+Damas                                | Regular | fonts/arabic-collection/damas.ttf | Arab
+Decotype Naskh Special               | Regular | fonts/arabic-collection/decotype-naskh-special.ttf | Arab
+Decotype Naskh                       | Regular | fonts/arabic-collection/decotype-naskh.ttf | Arab
+Decotype Thuluth                     | Regular | fonts/arabic-collection/decotype-thuluth.ttf | Arab
+Divani Mazar                         | Regular | fonts/arabic-collection/divani-mazar.ttf | Arab
+Diwani Bent                          | Regular | fonts/arabic-collection/diwani-bent.ttf | Arab
+Diwani Letter                        | Regular | fonts/arabic-collection/diwani-letter.ttf | Arab
+Diwani Outline Shaded                | Regular | fonts/arabic-collection/diwani-outline-shaded.ttf | Arab
+Diwani Simple Outline                | Regular | fonts/arabic-collection/diwani-simple-outline.ttf | Arab
+Diwani Simple Striped                | Regular | fonts/arabic-collection/diwani-simple-striped.ttf | Arab
+Far                                  | Regular | fonts/arabic-collection/far.ttf | Arab
+Fixedkofibold                        | Regular | fonts/arabic-collection/fixedkofibold.ttf | Arab
+FP Sim Khardar                       | Regular | fonts/arabic-collection/fp-sim-khardar.ttf | Arab
+Frutiger Lt Arabic 75 Black          | Regular | fonts/arabic-collection/frutiger-lt-arabic-75-black.ttf | Arab
+Furat                                | Regular | fonts/arabic-collection/furat.ttf | Arab
+GE Mb Farasha Light                  | Regular | fonts/arabic-collection/ge-mb-farasha-light.ttf | Arab
+GE Thuluth Light                     | Regular | fonts/arabic-collection/ge-thuluth-light.ttf | Arab
+Grand Kufi Mazar                     | Regular | fonts/arabic-collection/grand-kufi-mazar.ttf | Arab
+Hakim Ghazali                        | Regular | fonts/arabic-collection/hakim-ghazali.ttf | Arab
+Hawi T Diwany                        | Regular | fonts/arabic-collection/hawi-t-diwany.ttf | Arab
+Hebah Font                           | Regular | fonts/arabic-collection/hebah-font.ttf | Arab
+Hussaini Nastaleeq                   | Regular | fonts/arabic-collection/hussaini-nastaleeq.ttf | Arab
+Irannastaliq                         | Regular | fonts/arabic-collection/irannastaliq.ttf | Arab
+Kacstone Bold                        | Regular | fonts/arabic-collection/kacstone-bold.ttf | Arab
+Kfgqpc Uthman Taha Naskh             | Regular | fonts/arabic-collection/kfgqpc-uthman-taha-naskh.ttf | Arab
+Kfgqpc Uthmanic Script Hafs          | Regular | fonts/arabic-collection/kfgqpc-uthmanic-script-hafs.ttf | Arab
+Kufi V1                              | Regular | fonts/arabic-collection/kufi-v1.ttf | Arab
+Laylaruqrq                           | Regular | fonts/arabic-collection/laylaruqrq.ttf | Arab
+Laylathuluth                         | Regular | fonts/arabic-collection/laylathuluth.ttf | Arab
+MJ Faraz                             | Regular | fonts/arabic-collection/mj-faraz.ttf | Arab
+Molsaqarabic Extrabold               | Regular | fonts/arabic-collection/molsaqarabic-extrabold.ttf | Arab
+Motken K Homa                        | Regular | fonts/arabic-collection/motken-k-homa.ttf | Arab
+Motken K Nasim                       | Regular | fonts/arabic-collection/motken-k-nasim.ttf | Arab
+Naskh Mazar                          | Regular | fonts/arabic-collection/naskh-mazar.ttf | Arab
+Noto Kufi Arabic Bold                | Regular | fonts/arabic-collection/noto-kufi-arabic-bold.ttf | Arab
+Noto Kufi Arabic                     | Regular | fonts/arabic-collection/noto-kufi-arabic.ttf | Arab
+Old Antic Decorative                 | Regular | fonts/arabic-collection/old-antic-decorative.ttf | Arab
+Pak Nastaleeq                        | Regular | fonts/arabic-collection/pak-nastaleeq.ttf | Arab
+Paktype Naskh Basic                  | Regular | fonts/arabic-collection/paktype-naskh-basic.ttf | Arab
+PT Bold Broken                       | Regular | fonts/arabic-collection/pt-bold-broken.ttf | Arab
+Qatar2022 Bold                       | Regular | fonts/arabic-collection/qatar2022-bold.ttf | Arab
+Rana Kufi                            | Regular | fonts/arabic-collection/rana-kufi.otf | Arab
+Raqq                                 | Regular | fonts/arabic-collection/raqq.ttf | Arab
+Rekrq                                | Regular | fonts/arabic-collection/rekrq.ttf | Arab
+Sada Bold                            | Regular | fonts/arabic-collection/sada-bold.ttf | Arab
+SG Kara Regular                      | Regular | fonts/arabic-collection/sg-kara-regular.ttf | Arab
+SP Vahid                             | Regular | fonts/arabic-collection/sp-vahid.ttf | Arab
+Thulth Mazar                         | Regular | fonts/arabic-collection/thulth-mazar.ttf | Arab
+W Zeytoon                            | Regular | fonts/arabic-collection/w-zeytoon.ttf | Arab
+XB Zar Bold Italic                   | Regular | fonts/arabic-collection/xb-zar-bold-italic.ttf | Arab
+XM Vahid Bold Italic                 | Regular | fonts/arabic-collection/xm-vahid-bold-italic.ttf | Arab
+XM Vahid Bold                        | Regular | fonts/arabic-collection/xm-vahid-bold.ttf | Arab
+XM Vahid Italic                      | Regular | fonts/arabic-collection/xm-vahid-italic.ttf | Arab
+XM Vahid                             | Regular | fonts/arabic-collection/xm-vahid.ttf | Arab
+XM Yekan Bold Italic                 | Regular | fonts/arabic-collection/xm-yekan-bold-italic.ttf | Arab
