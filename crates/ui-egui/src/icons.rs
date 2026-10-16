@@ -214,18 +214,19 @@ pub fn paint(p: &Painter, r: Rect, name: &str, c: Color32, accent: Color32) {
             ().then_lines(&pen, 8.0, 17.0, &[7.0, 13.0])
         }
         "justify" => pen.lines(3.0, 17.0, &[4.0, 7.0, 10.0, 13.0, 16.0]),
-        // Text direction (Word parity): a pilcrow with an arrow in the reading direction.
-        // LTR = ¶ followed by a right arrow; RTL = ¶ preceded by a left arrow (so the symbol
-        // reads start-to-end in the paragraph's own direction).
+        // Text direction (Word parity): a pilcrow on the left with an arrow pointing in the
+        // paragraph's reading direction. LTR arrow points right; RTL arrow points left. The
+        // pilcrow stays on the left in both so the two icons share the same anchor and only
+        // the arrow direction distinguishes them.
         "textLtr" => {
-            pen.text(6.5, 10.0, 15.0, "¶", c, false);
+            pen.text(5.5, 10.0, 15.0, "¶", c, false);
             pen.line_c(&[(2.5, 16.5), (16.5, 16.5)], a);
             pen.line_c(&[(13.5, 14.0), (16.5, 16.5), (13.5, 19.0)], a);
         }
         "textRtl" => {
-            pen.text(13.5, 10.0, 15.0, "¶", c, false);
-            pen.line_c(&[(17.5, 16.5), (3.5, 16.5)], a);
-            pen.line_c(&[(6.5, 14.0), (3.5, 16.5), (6.5, 19.0)], a);
+            pen.text(5.5, 10.0, 15.0, "¶", c, false);
+            pen.line_c(&[(16.5, 16.5), (2.5, 16.5)], a);
+            pen.line_c(&[(5.5, 14.0), (2.5, 16.5), (5.5, 19.0)], a);
         }
         "lineSpacing" => {
             pen.lines(9.0, 17.0, &[5.0, 10.0, 15.0]);
