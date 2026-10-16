@@ -3528,7 +3528,11 @@ fn place_outline_para(ctx: &mut Ctx, pb: &mut PageBuilder, p: &Paragraph, block:
     }
     let level = o.levels.get(block).copied().unwrap_or(outline::BODY);
     let indent = outline::indent(&o.levels, block);
-    let rtl = ctx.doc.styles.resolve_para(&p.props).bidi;
+    // Direction: explicit paragraph/style `bidi` wins; otherwise fall back to the first strong
+    // character of the paragraph's text so Arabic/Persian body paragraphs under RTL headings line
+    // up with their bullets instead of hanging on the opposite side of the column.
+    let rp = ctx.doc.styles.resolve_para(&p.props);
+    let rtl = rp.bidi || (p.props.bidi.is_none() && wordcraft_doc::bidi::first_strong_is_rtl(&p.plain_text()));
     // LTR: text column is shifted right by [indent + SYMBOL_W], symbol gutter on the left.
     // RTL: text column stays at col_x() so the right-aligned text sits where its headings read
     // naturally; indent eats width from the left; symbol gutter sits on the right.
