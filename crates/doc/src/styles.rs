@@ -445,8 +445,11 @@ impl Default for StyleSheet {
 /// The default heading colour.
 pub const HEADING_BLUE: Rgb = Rgb(0x0F, 0x47, 0x61);
 /// Default body/heading fonts (theme minor/major). Substituted by layout when not installed.
-pub const BODY_FONT: &str = "Aptos";
-pub const HEADING_FONT: &str = "Aptos Display";
+/// Lauh ships them pointing at a bundled Arabic typeface so new documents render immediately in
+/// the font the user expects for Arabic/Persian/Qur'anic text; Latin runs inside the same
+/// paragraph fall back to a Latin face through the font-DB fallback chain.
+pub const BODY_FONT: &str = "Niloufaraneh";
+pub const HEADING_FONT: &str = "Niloufaraneh";
 
 fn chr() -> CharProps {
     CharProps::default()
@@ -469,15 +472,27 @@ impl StyleSheet {
         }
     }
 
-    /// The built-in style set used for new documents.
+    /// The built-in style set used for new documents. Lauh ships RTL by default: every new
+    /// paragraph gets `bidi` + right-alignment so Arabic/Persian typing reads naturally without
+    /// the user having to find the direction toggle. Latin runs inside bidi paragraphs still
+    /// render left-to-right as expected (the bidi algorithm handles that per-run).
     pub fn builtin() -> Self {
         let mut s = StyleSheet {
-            default_chr: CharProps { font: Some(BODY_FONT.into()), size: Some(12.0), kern: Some(1.0), lang: Some("en-US".into()), ..chr() },
+            default_chr: CharProps {
+                font: Some(BODY_FONT.into()),
+                size: Some(12.0),
+                kern: Some(1.0),
+                lang: Some("ar-SA".into()),
+                rtl: Some(true),
+                ..chr()
+            },
             default_para: ParaProps {
                 space_after: Some(8.0),
                 space_before: Some(0.0),
                 line_spacing: Some(LineSpacing::Multiple(1.15)),
                 widow_control: Some(true),
+                bidi: Some(true),
+                align: Some(Align::Right),
                 ..para()
             },
             default_para_present: true,
