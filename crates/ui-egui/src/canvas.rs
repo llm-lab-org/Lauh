@@ -3792,7 +3792,7 @@ mod tests {
     fn context_menu_on_a_toc_entry_updates_the_table() {
         use egui_kittest::kittest::Queryable;
         use wordcraft_doc::{Block, Paragraph, Path, props::CharProps};
-        let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_engine::sample::report()), Default::default());
+        let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_engine::sample::sample_document()), Default::default());
         a.run("caret.docStart", json!({})).unwrap();
         a.run("references.toc", json!({})).unwrap();
         let end = a.session.doc.body.len();
