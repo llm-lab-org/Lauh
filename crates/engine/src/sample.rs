@@ -29,11 +29,11 @@ pub fn sample_document() -> Document {
     // Title + subtitle, both right-to-left.
     let mut title = styled("سورة الفاتحة", "HadithTitleL4");
     title.props.bidi = Some(true);
-    title.props.align = Some(Align::Right);
+    title.props.align = Some(Align::Left);
     b.push(Block::Para(title));
     let mut subtitle = styled("الفاتحة — فاتحة الكتاب، سبع آيات", "Subtitle");
     subtitle.props.bidi = Some(true);
-    subtitle.props.align = Some(Align::Right);
+    subtitle.props.align = Some(Align::Left);
     b.push(Block::Para(subtitle));
     let verses = [
         "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
@@ -47,7 +47,7 @@ pub fn sample_document() -> Document {
     for text in verses {
         let mut p = Paragraph::new();
         p.props.bidi = Some(true);
-        p.props.align = Some(Align::Right);
+        p.props.align = Some(Align::Left);
         p.props.space_after = Some(6.0);
         add(&mut p, text, CharProps { style: Some("QuranVerse".into()), ..Default::default() });
         b.push(Block::Para(p));

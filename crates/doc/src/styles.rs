@@ -492,7 +492,10 @@ impl StyleSheet {
                 line_spacing: Some(LineSpacing::Multiple(1.15)),
                 widow_control: Some(true),
                 bidi: Some(true),
-                align: Some(Align::Right),
+                // Logical-start alignment: visual right in a bidi paragraph (RTL), visual left in
+                // LTR. Setting Align::Right here would mean the logical END, which is visually left
+                // for RTL — the opposite of what Lauh wants out of the box.
+                align: Some(Align::Left),
                 ..para()
             },
             default_para_present: true,

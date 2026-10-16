@@ -140,7 +140,10 @@ pub(crate) fn outline_para(doc: &Document, p: &Paragraph, plain: bool, rtl: bool
     q.props.indent_left = Some(0.0);
     q.props.indent_right = Some(0.0);
     q.props.indent_first = Some(0.0);
-    q.props.align = Some(if rtl { Align::Right } else { Align::Left });
+    // Stored align is LOGICAL: Align::Left means "start" (visual right for RTL, visual left for
+    // LTR). For both directions we want start-aligned text in the outline, which happens to be
+    // `Align::Left` in either case.
+    q.props.align = Some(Align::Left);
     if rtl {
         q.props.bidi = Some(true);
     }
