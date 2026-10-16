@@ -1,0 +1,1638 @@
+---
+metadata:
+  taxonomy_name: Arabic Type-Style Taxonomy
+  version: '0.4'
+  created_on: '2026-05-20'
+  updated_on: '2026-09-24'
+  purpose: Classify Arabic type and handwriting into recognizable families and distinct subcategories, then map them to document uses and representative fonts.
+  structure:
+    top_level_families: 17
+    subcategories: 48
+    font_records: 27
+    family_level: Broad type-style, calligraphic, historical, regional, or practical document family.
+    subcategory_level: A visually, structurally, historically, or regionally distinct form within a family.
+    coverage_rule: Document types, physical or born-digital media, platforms, and element roles describe use; they do not create new font categories.
+    naming_rule: Families and subcategories use one name field. Registry references use Family > Subcategory.
+  rank_scope: Expected occurrence across a mixed physical and born-digital corpus; lower ranks do not imply lower historical or artistic importance.
+  classification_rule: Keep only distinctions supported by recognizable form, lineage, history, or region. Treat weight, width, medium, platform, and use as attributes.
+  scope_note: Ancient North Arabian scripts such as Safaitic and Hismaic are related epigraphic systems outside the core Arabic type-style hierarchy.
+  urls_verified_on: '2026-09-24'
+  url_note: All populated URLs were checked. Inaccessible legacy links were replaced with current authoritative sources; unverified candidate URLs remain blank.
+version_history:
+- version: '0.4'
+  updated_on: '2026-09-24'
+  changes:
+  - Consolidated overlapping subcategories while retaining the 17-family structure.
+  - Clarified the family, subcategory, and coverage layers.
+  - Simplified naming and refreshed verified URLs.
+availability_status_values:
+  open_source_downloadable: Font appears to be open-source/downloadable from a trusted official source; verify license before redistribution.
+  official_free_restricted: Font is available from an official source, but reuse, redistribution, and modification terms need careful review.
+  system_font_reference_only: Font may be common in real documents, but should not be redistributed.
+  candidate_unverified: Font exists in the inventory, but the source/license must be verified before use beyond local testing.
+document_type_labels:
+- Correspondence
+- Publications
+- Research
+- Reports
+- Forms
+- Financial
+- Identity
+- Legal
+- Healthcare
+- Employment
+- Governance
+- Technical
+- Education
+- Publicity
+- Logistics
+- Visual-Technical
+- Historical & Cultural
+- Digital-Native
+- Property & Insurance
+- Personal
+- Packaging
+research_sources:
+- name: Abdalla — The New Arabic Type Classification System
+  url: https://maut.journals.ekb.eg/article_101074_934ecbbb8a32ef72cad1deb128abe0fa.pdf?lang=en
+  supports:
+  - form-language classification
+  - classical, modern, and calligraphic type classes
+- name: Abu-Shaqra — Arabic Type Classification System
+  url: https://openresearch.ocadu.ca/id/eprint/3076/1/Abu-Shaqra_Darin_2020_MDes_INCD_MRP.pdf
+  supports:
+  - lineage, anatomy, connectivity, and usage as separate dimensions
+  - calligraphic, cross-script, and freehand sources
+- name: Ashmolean Museum — The Qur’an and the Six Scripts
+  url: https://jameelcentre.ashmolean.org/collection/6980/9992/9995
+  supports:
+  - 'Six Pens: Naskh, Thuluth, Muhaqqaq, Rayhani, Tawqi, and Riqa'
+- name: Rosetta — Arabic calligraphic styles overview
+  url: https://rosettatype.com/articles/2016-05-24-arabic-calligraphic-styles/
+  supports:
+  - Kufi, Naskh, Thuluth, and Ruqah distinctions
+  - calligraphic influence on Arabic type
+- name: The Metropolitan Museum of Art — Early Qur'ans
+  url: https://www.metmuseum.org/de/essays/early-qurans-8thearly-13th-centuries
+  supports:
+  - Hijazi
+  - early Qur'anic Kufi
+  - Abbasid New Style
+- name: The Metropolitan Museum of Art — Arabic Script and the Art of Calligraphy
+  url: https://www.metmuseum.org/learn/educators/curriculum-resources/~/media/Files/Learn/For%20Educators/Publications%20for%20Educators/Islamic%20Teacher%20Resource/Unit2.pdf
+  supports:
+  - Six Pens
+  - Naskh
+  - Thuluth
+  - Muhaqqaq
+  - Rayhani
+  - Tawqi'
+  - Riqa'
+- name: OCIANA — Paleo-Arabic
+  url: https://ociana.osu.edu/scripts_paleo_arabic
+  supports:
+  - Paleo-Arabic
+  - pre-Islamic and transitional Arabic epigraphy
+- name: OCIANA — Ancient North Arabian
+  url: https://ociana.osu.edu/scripts_north_arabian
+  supports:
+  - separation of Ancient North Arabian scripts from the Arabic type-style hierarchy
+- name: The Manuscript Tradition of the Islamic West
+  url: https://www.jstor.org/stable/10.3366/j.ctv2rcnppb
+  supports:
+  - western Islamic macro-tradition
+  - distinct Maghribi and Andalusi manuscript identities
+- name: Journal of Calligraphy — Maghribi script history and classification
+  url: https://journal-pasca.um.ac.id/index.php/joc/article/view/10
+  supports:
+  - Maghribi Kufi
+  - Mabsut
+  - Mujawhar
+  - Maghribi Thuluth
+  - Musnad/Zimami
+- name: Institute of Arabic Manuscripts — script identification curriculum
+  url: https://manuscriptsinstitute.org/derasat_deblom_tawsef.aspx
+  supports:
+  - historical Kufi variants
+  - pre-Islamic through Abbasid manuscript study
+- name: TypeTogether — Playpen Sans source repository
+  url: https://github.com/TypeTogether/Playpen-Sans
+  supports:
+  - Playpen Sans Arabic source
+  - SIL Open Font License 1.1
+related_epigraphic_scripts:
+- status: related_reference_outside_core_taxonomy
+  examples:
+  - Safaitic
+  - Hismaic
+  - Dadanitic
+  - Taymanitic
+  note: South Semitic script systems used in ancient Arabia; not classified as Arabic type-style families.
+  name: Ancient North Arabian
+arabic_type_taxonomy:
+- rank: 1
+  name: Naskh-based text
+  prevalence: very_high
+  function: long_reading
+  document_type_mapping:
+    primary:
+    - Publications
+    - Research
+    - Education
+    - Legal
+    secondary:
+    - Reports
+    - Governance
+    - Healthcare
+    - Employment
+    - Financial
+    - Property & Insurance
+    - Historical & Cultural
+    - Digital-Native
+  children:
+  - name: General Naskh
+    description: Mainstream Naskh for books, periodicals, documents, and extended reading.
+    font_instances:
+    - amiri
+    - scheherazade_new
+    - noto_naskh_arabic
+    - decotype_naskh
+  - name: Qur'anic / Uthmanic Naskh
+    description: Naskh-based type for fully vocalized Qur'anic composition or Uthmanic orthography.
+    font_instances:
+    - kfgqpc_uthman_taha_naskh
+    - kfgqpc_uthmanic_hafs
+    - amiri
+    - scheherazade_new
+  - name: South Asian / Sindhi Naskh
+    description: Naskh-derived forms and mark behavior associated with Sindhi and related South Asian use.
+    font_instances:
+    - lateef
+  - name: Manuscript / copyist Naskh
+    description: Premodern scholarly, scientific, and professional-copyist Naskh hands.
+    font_instances: []
+- rank: 2
+  name: Simplified / office Arabic
+  prevalence: very_high
+  function: administrative_documents
+  classification_basis: practical_document_family
+  document_type_mapping:
+    primary:
+    - Reports
+    - Forms
+    - Governance
+    - Correspondence
+    - Employment
+    secondary:
+    - Legal
+    - Financial
+    - Healthcare
+    - Property & Insurance
+    - Digital-Native
+  children:
+  - name: Document serif Arabic
+    description: Simplified Naskh-like and system serif faces used in office documents.
+    font_instances:
+    - noto_naskh_arabic
+  - name: Document sans Arabic
+    description: Sans faces used in reports, forms, presentations, and generated documents.
+    font_instances:
+    - cairo
+  - name: Legacy / system Arabic
+    description: Older operating-system and office fonts retained as reference-only records when identified.
+    font_instances: []
+- rank: 3
+  name: Modern Arabic sans
+  prevalence: very_high
+  function: ui_and_institutional_text
+  document_type_mapping:
+    primary:
+    - Digital-Native
+    - Reports
+    - Technical
+    - Publicity
+    secondary:
+    - Governance
+    - Education
+    - Visual-Technical
+    - Forms
+    - Correspondence
+    - Healthcare
+    - Employment
+    - Logistics
+    - Property & Insurance
+  children:
+  - name: Humanist Arabic sans
+    description: Low-contrast sans faces with open, calligraphically informed forms.
+    font_instances: []
+  - name: Neo-grotesque Arabic sans
+    description: Neutral sans faces with relatively uniform structure for institutional text and interfaces.
+    font_instances: []
+  - name: Geometric Arabic sans
+    description: Simplified geometric sans faces for contemporary layouts and screens.
+    font_instances:
+    - cairo
+- rank: 4
+  name: Kufi-derived and angular traditions
+  prevalence: high
+  function: text_headings_branding_epigraphy
+  document_type_mapping:
+    primary:
+    - Publicity
+    - Digital-Native
+    - Identity
+    - Logistics
+    secondary:
+    - Reports
+    - Governance
+    - Education
+    - Visual-Technical
+    - Packaging
+    - Historical & Cultural
+  children:
+  - name: Contemporary Kufi
+    description: Modern Kufi-derived type, including geometric, low-contrast, sans-like, and institutional interpretations.
+    font_instances:
+    - reem_kufi
+    - rana_kufi
+    - cairo
+    - qatar_2022
+  - name: Early Qur'anic Kufi
+    description: Early angular and rectilinear Qur'anic book hands.
+    font_instances: []
+  - name: Eastern Kufi / Abbasid New Style
+    description: Vertically emphasized eastern angular book hand, also called New Style or Broken Kufi.
+    font_instances: []
+  - name: Square Kufi
+    description: Grid-constructed Kufi for architecture, logos, and compact compositions.
+    font_instances:
+    - grand_kufi_mazar
+  - name: Ornamented Kufi
+    description: Foliated, floriated, braided, or knotted Kufi integrated with ornament.
+    font_instances:
+    - grand_kufi_mazar
+- rank: 5
+  name: Ruq'ah
+  prevalence: medium
+  function: handwriting_informal_text
+  document_type_mapping:
+    primary:
+    - Personal
+    - Education
+    - Correspondence
+    secondary:
+    - Forms
+    - Employment
+    - Governance
+    - Historical & Cultural
+    - Digital-Native
+  children:
+  - name: Formalized Ruq'ah type
+    description: Typefaces that regularize Ruq'ah while preserving its clipped, rapid structure.
+    font_instances:
+    - aref_ruqaa
+    - raqq
+  - name: Fast handwritten Ruq'ah
+    description: Inked or handwriting-like Ruq'ah emphasizing speed and informal movement.
+    font_instances:
+    - aref_ruqaa_ink
+    - laylaruqaa
+  - name: Ottoman / clerical Ruq'ah
+    description: Administrative and chancery Ruq'ah, including late Ottoman clerical hands.
+    font_instances: []
+- rank: 6
+  name: Casual handwritten Arabic
+  prevalence: medium
+  function: informal_educational_personal
+  document_type_mapping:
+    primary:
+    - Education
+    - Personal
+    - Publicity
+    - Digital-Native
+    secondary:
+    - Correspondence
+  children:
+  - name: Everyday personal handwriting
+    description: Contemporary personal handwriting outside a formal calligraphic school.
+    font_instances: []
+  - name: Playful / educational handwriting
+    description: Child-friendly and hand-drawn type for learning and casual content.
+    font_instances:
+    - playpen_sans_arabic
+  - name: Brush / expressive handwriting
+    description: Informal forms whose energetic brush or pen behavior is visually central.
+    font_instances: []
+- rank: 7
+  name: Thuluth
+  prevalence: medium_low
+  function: formal_display
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Publicity
+    - Identity
+    secondary:
+    - Personal
+    - Governance
+  children:
+  - name: Classical Thuluth
+    description: Formal Thuluth for headings, inscriptions, and calligraphic display.
+    font_instances:
+    - decotype_thuluth
+    - a_thuluth
+  - name: Jali Thuluth
+    description: Dense, interwoven, and elaborately composed Thuluth.
+    font_instances:
+    - ge_thuluth
+    - laylathuluth
+- rank: 8
+  name: Diwani
+  prevalence: low
+  function: ceremonial_display
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Identity
+    - Publicity
+    - Personal
+    secondary:
+    - Governance
+  children:
+  - name: Diwani
+    description: Relatively open and readable Diwani.
+    font_instances:
+    - diwani_letter
+    - hawi_diwany
+  - name: Jali Diwani
+    description: Dense and highly ornamented Diwani composition.
+    font_instances:
+    - diwani_bent
+- rank: 9
+  name: Nastaliq / Farsi
+  prevalence: low_for_arabic_language_high_for_urdu_persian
+  function: arabic_script_regional_text_display
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Publications
+    - Personal
+    secondary:
+    - Correspondence
+    - Education
+  children:
+  - name: Persian Nastaliq
+    description: Nastaliq associated primarily with Persian literary and calligraphic practice.
+    font_instances:
+    - hussaini_nastaleeq
+  - name: Urdu Nastaliq
+    description: Nastaliq adapted to Urdu orthography and publishing conventions.
+    font_instances:
+    - hussaini_nastaleeq
+    - pak_nastaleeq
+- rank: 10
+  name: Maghribi traditions
+  prevalence: low_region_specific
+  function: western_islamic_books_documents_religious_texts
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Publications
+    secondary:
+    - Legal
+    - Education
+    - Correspondence
+    - Governance
+  children:
+  - name: Maghribi Mabsut
+    description: Spacious rounded western Islamic book hand.
+    font_instances: []
+  - name: Maghribi Mujawhar
+    description: Compact rapid Maghribi cursive for books and documents.
+    font_instances: []
+  - name: Maghribi Thuluth
+    description: Western Islamic adaptation of Thuluth.
+    font_instances: []
+  - name: Maghribi Kufi
+    description: Western regional Kufi used in manuscripts, monuments, and decoration.
+    font_instances: []
+  - name: Musnad / Zimami
+    description: Rapid Maghribi documentary hand used in legal and administrative records.
+    font_instances: []
+- rank: 11
+  name: Decorative and experimental Arabic display
+  prevalence: low_overall_medium_in_publicity
+  function: novelty_publicity_artistic_display
+  document_type_mapping:
+    primary:
+    - Publicity
+    - Digital-Native
+    secondary:
+    - Personal
+    - Visual-Technical
+    - Packaging
+    - Identity
+  children:
+  - name: Constructed / modular display
+    description: Stencil, pixel, techno, three-dimensional, and other modular display systems.
+    font_instances:
+    - qatar_2022
+  - name: Expressive / distressed display
+    description: Graffiti, broken, distressed, and materially expressive display lettering.
+    font_instances: []
+  - name: Bilingual / cross-script hybrid
+    description: Display designs that deliberately coordinate or hybridize Arabic and non-Arabic forms.
+    font_instances:
+    - qatar_2022
+  - name: Pictorial / zoomorphic calligraphy
+    description: Calligraphic composition arranged into representational imagery.
+    font_instances: []
+- rank: 12
+  name: Andalusi traditions
+  prevalence: very_low_historical_region_specific
+  function: andalusi_books_documents_inscriptions
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    secondary:
+    - Publications
+    - Education
+    - Publicity
+  children:
+  - name: Andalusi book hand
+    description: Rounded manuscript hand associated with book production in al-Andalus.
+    font_instances: []
+  - name: Andalusi Kufi
+    description: Andalusi angular tradition used in manuscripts, inscriptions, and architecture.
+    font_instances: []
+- rank: 13
+  name: Saharan and Sahelian Arabic-script traditions
+  prevalence: low_region_specific
+  function: regional_manuscripts_ajami_documents_education
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    secondary:
+    - Education
+    - Personal
+    - Correspondence
+    - Publications
+  children:
+  - name: Sudani / Sudanic hands
+    description: Broad family of Saharan and Sahelian scholarly manuscript hands.
+    font_instances: []
+  - name: Sahrawi hand
+    description: Regional Saharan manuscript and documentary hand.
+    font_instances: []
+  - name: Suqi hand
+    description: Distinct regional West African manuscript hand.
+    font_instances: []
+- rank: 14
+  name: Muhaqqaq and Rayhani
+  prevalence: very_low_historical
+  function: formal_books_quranic_text_display
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    secondary:
+    - Publications
+    - Education
+  children:
+  - name: Muhaqqaq
+    description: Large, stately proportioned script used in Qur'ans and formal manuscripts.
+    font_instances: []
+  - name: Rayhani
+    description: Smaller and more delicate proportioned script related to Muhaqqaq.
+    font_instances: []
+- rank: 15
+  name: Tawqi' and historical Riqa'
+  prevalence: very_low_historical
+  function: chancery_letters_edicts_manuscripts
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Governance
+    secondary:
+    - Correspondence
+    - Legal
+  children:
+  - name: Tawqi'
+    description: Proportioned chancery and display script used for signatures, edicts, and manuscripts.
+    font_instances: []
+  - name: Historical Riqa'
+    description: Historical proportioned chancery hand distinct from later Ruq'ah.
+    font_instances:
+    - raqq
+- rank: 16
+  name: Hijazi and Ma'il traditions
+  prevalence: very_low_historical
+  function: early_quranic_books_documents
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    secondary:
+    - Education
+    - Publications
+  children:
+  - name: Hijazi / Ma'il early sloping hands
+    description: Early sloping manuscript hands represented in some of the earliest surviving Qur'ans.
+    font_instances: []
+- rank: 17
+  name: Paleo-Arabic and transitional Arabic
+  prevalence: very_low_epigraphic
+  function: pre_islamic_and_transitional_epigraphy
+  document_type_mapping:
+    primary:
+    - Historical & Cultural
+    - Visual-Technical
+    secondary:
+    - Education
+  children:
+  - name: Paleo-Arabic
+    description: Fully evolved Arabic script in pre-Islamic and earliest Islamic inscriptions.
+    font_instances: []
+  - name: Nabataean-to-Arabic transitional
+    description: Epigraphic forms documenting development from Nabataean writing toward Arabic.
+    font_instances: []
+font_registry:
+  amiri:
+    family: Amiri
+    style_family: Naskh
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Alif Type
+    download_page_url: https://github.com/aliftype/amiri
+    direct_download_url: 
+    local_paths:
+      path: files/amiri/Amiri-Regular.ttf
+      path_bold: files/amiri/Amiri-Bold.ttf
+    scripts:
+    - ar
+    - en
+    weights:
+    - 400
+    - 700
+    styles:
+    - normal
+    - italic
+    declared_blocks:
+    - Arabic
+    - Arabic Supplement
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    - Basic Latin
+    - Latin-1 Supplement
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > General Naskh
+      secondary:
+      - Naskh-based text > Qur'anic / Uthmanic Naskh
+    recommended_use:
+    - body_text
+    - long_reading
+    - books
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Publications
+      - Education
+      - Research
+      secondary:
+      - Legal
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Naskh/text font.
+    review_status: initial_mapping_from_inventory
+  scheherazade_new:
+    family: Scheherazade New
+    style_family: Naskh
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: SIL
+    download_page_url: https://software.sil.org/scheherazade/
+    direct_download_url: 
+    local_paths:
+      path: files/scheherazade/ScheherazadeNew-Regular.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Supplement
+    - Arabic Extended-A
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    - Basic Latin
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > General Naskh
+      secondary:
+      - Naskh-based text > Qur'anic / Uthmanic Naskh
+    recommended_use:
+    - body_text
+    - long_reading
+    - books
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Publications
+      - Education
+      - Research
+      secondary:
+      - Legal
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Naskh/text font.
+    review_status: initial_mapping_from_inventory
+  noto_naskh_arabic:
+    family: Noto Naskh Arabic
+    style_family: Naskh
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts / Noto Fonts
+    download_page_url: https://fonts.google.com/noto/specimen/Noto+Naskh+Arabic
+    direct_download_url: 
+    local_paths:
+      path: files/noto/NotoNaskhArabic-Regular.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    - 500
+    - 600
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Supplement
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    - Basic Latin
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > General Naskh
+      secondary:
+      - Simplified / office Arabic > Document serif Arabic
+    recommended_use:
+    - body_text
+    - long_reading
+    - books
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Publications
+      - Education
+      - Research
+      secondary:
+      - Legal
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Naskh/text font.
+    review_status: initial_mapping_from_inventory
+  lateef:
+    family: Lateef
+    style_family: Naskh
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: SIL
+    download_page_url: https://software.sil.org/lateef/
+    direct_download_url: 
+    local_paths:
+      path: files/lateef/Lateef-Regular.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Supplement
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > South Asian / Sindhi Naskh
+      secondary: []
+    recommended_use:
+    - body_text
+    - long_reading
+    - books
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Publications
+      - Education
+      - Research
+      secondary:
+      - Legal
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Naskh/text font.
+    review_status: initial_mapping_from_inventory
+  cairo:
+    family: Cairo
+    style_family: Modern Arabic sans
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts
+    download_page_url: https://fonts.google.com/specimen/Cairo
+    direct_download_url: 
+    local_paths:
+      path: files/cairo/Cairo-Regular.ttf
+    scripts:
+    - ar
+    - en
+    weights:
+    - 300
+    - 400
+    - 600
+    - 700
+    - 900
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-B
+    - Basic Latin
+    - Latin-1 Supplement
+    taxonomy_membership:
+      primary:
+      - Modern Arabic sans > Geometric Arabic sans
+      secondary:
+      - Simplified / office Arabic > Document sans Arabic
+      - Kufi-derived and angular traditions > Contemporary Kufi
+    recommended_use:
+    - ui_text
+    - reports
+    - presentations
+    - digital_documents
+    document_type_mapping:
+      primary:
+      - Digital-Native
+      - Reports
+      - Technical
+      secondary:
+      - Publicity
+      - Governance
+      - Education
+    notes: Mapped from the existing inventory as a modern Arabic sans/display font.
+    review_status: initial_mapping_from_inventory
+  reem_kufi:
+    family: Reem Kufi
+    style_family: Kufi-derived
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts
+    download_page_url: https://fonts.google.com/specimen/Reem+Kufi
+    direct_download_url: 
+    local_paths:
+      path: files/reem-kufi/ReemKufi-Regular.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    - 500
+    - 600
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Kufi-derived and angular traditions > Contemporary Kufi
+      secondary: []
+    recommended_use:
+    - headings
+    - branding
+    - signage
+    - short_display_text
+    document_type_mapping:
+      primary:
+      - Publicity
+      - Digital-Native
+      - Identity
+      secondary:
+      - Logistics
+      - Reports
+    notes: Mapped from the existing inventory as a Kufi-derived font.
+    review_status: initial_mapping_from_inventory
+  aref_ruqaa:
+    family: Aref Ruqaa
+    style_family: Ruq'ah / handwritten
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts / Alif Type
+    download_page_url: https://fonts.google.com/specimen/Aref+Ruqaa
+    direct_download_url: 
+    local_paths:
+      path: files/aref-ruqaa/ArefRuqaa-Regular.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Ruq'ah > Formalized Ruq'ah type
+      secondary: []
+    recommended_use:
+    - handwriting_simulation
+    - informal_text
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Personal
+      - Education
+      - Correspondence
+      secondary:
+      - Forms
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Ruq'ah or handwriting-like font.
+    review_status: initial_mapping_from_inventory
+  decotype_naskh:
+    family: DecoType Naskh
+    style_family: Naskh
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/decotype-naskh/decotype-naskh.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > General Naskh
+      secondary: []
+    recommended_use:
+    - body_text
+    - long_reading
+    - books
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Publications
+      - Education
+      - Research
+      secondary:
+      - Legal
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Naskh/text font.
+    review_status: initial_mapping_from_inventory
+  kfgqpc_uthman_taha_naskh:
+    family: KFGQPC Uthman Taha Naskh
+    style_family: Qur'anic Naskh / Uthmanic
+    availability_status: official_free_restricted
+    license: official_download_terms_to_verify
+    source: King Fahd Glorious Quran Printing Complex
+    download_page_url: https://qurancomplex.gov.sa/en/techquran/dev/
+    direct_download_url: 
+    local_paths:
+      path: files/kfgqpc/kfgqpc-uthman-taha-naskh.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > Qur'anic / Uthmanic Naskh
+      secondary: []
+    recommended_use:
+    - quranic_text
+    - religious_documents
+    - heritage_documents
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Education
+      - Publications
+      secondary:
+      - Personal
+    notes: Mapped from the existing inventory as a Qur'anic/Uthmanic font.
+    review_status: initial_mapping_from_inventory
+  aref_ruqaa_ink:
+    family: Aref Ruqaa Ink
+    style_family: Ruq'ah / handwritten
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts / Alif Type
+    download_page_url: https://fonts.google.com/specimen/Aref+Ruqaa+Ink
+    direct_download_url: 
+    local_paths:
+      path: files/aref-ruqaa-ink/aref-ruqaa-ink.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Ruq'ah > Fast handwritten Ruq'ah
+      secondary: []
+    recommended_use:
+    - handwriting_simulation
+    - informal_text
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Personal
+      - Education
+      - Correspondence
+      secondary:
+      - Forms
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Ruq'ah or handwriting-like font.
+    review_status: initial_mapping_from_inventory
+  laylaruqaa:
+    family: LaylaRuqaa
+    style_family: Ruq'ah / handwritten
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/laylaruqrq/laylaruqrq.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Ruq'ah > Fast handwritten Ruq'ah
+      secondary: []
+    recommended_use:
+    - handwriting_simulation
+    - informal_text
+    - educational_documents
+    document_type_mapping:
+      primary:
+      - Personal
+      - Education
+      - Correspondence
+      secondary:
+      - Forms
+      - Historical & Cultural
+    notes: Mapped from the existing inventory as a Ruq'ah or handwriting-like font.
+    review_status: initial_mapping_from_inventory
+  kfgqpc_uthmanic_hafs:
+    family: KFGQPC Uthmanic Hafs
+    style_family: Qur'anic Naskh / Uthmanic
+    availability_status: official_free_restricted
+    license: official_download_terms_to_verify
+    source: King Fahd Glorious Quran Printing Complex
+    download_page_url: https://qurancomplex.gov.sa/en/techquran/dev/
+    direct_download_url: 
+    local_paths:
+      path: files/kfgqpc/kfgqpc-uthmanic-script-hafs.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Naskh-based text > Qur'anic / Uthmanic Naskh
+      secondary: []
+    recommended_use:
+    - quranic_text
+    - religious_documents
+    - heritage_documents
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Education
+      - Publications
+      secondary:
+      - Personal
+    notes: Mapped from the existing inventory as a Qur'anic/Uthmanic font.
+    review_status: initial_mapping_from_inventory
+  decotype_thuluth:
+    family: DecoType Thuluth
+    style_family: Thuluth
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/decotype-thuluth/decotype-thuluth.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Thuluth > Classical Thuluth
+      secondary: []
+    recommended_use:
+    - formal_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publicity
+      - Identity
+      secondary:
+      - Personal
+      - Governance
+    notes: Mapped from the existing inventory as a Thuluth display font.
+    review_status: initial_mapping_from_inventory
+  ge_thuluth:
+    family: GE Thuluth
+    style_family: Thuluth
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/ge-thuluth/ge-thuluth-light.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Thuluth > Jali Thuluth
+      secondary: []
+    recommended_use:
+    - formal_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publicity
+      - Identity
+      secondary:
+      - Personal
+      - Governance
+    notes: Mapped from the existing inventory as a Thuluth display font.
+    review_status: initial_mapping_from_inventory
+  a_thuluth:
+    family: A Thuluth
+    style_family: Thuluth
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/a-thuluth/a-thuluth.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Thuluth > Classical Thuluth
+      secondary: []
+    recommended_use:
+    - formal_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publicity
+      - Identity
+      secondary:
+      - Personal
+      - Governance
+    notes: Mapped from the existing inventory as a Thuluth display font.
+    review_status: initial_mapping_from_inventory
+  laylathuluth:
+    family: LaylaThuluth
+    style_family: Thuluth
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/laylathuluth/laylathuluth.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Thuluth > Jali Thuluth
+      secondary: []
+    recommended_use:
+    - formal_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publicity
+      - Identity
+      secondary:
+      - Personal
+      - Governance
+    notes: Mapped from the existing inventory as a Thuluth display font.
+    review_status: initial_mapping_from_inventory
+  diwani_bent:
+    family: Diwani Bent
+    style_family: Diwani
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/diwani/diwani-bent.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Diwani > Jali Diwani
+      secondary: []
+    recommended_use:
+    - ceremonial_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Identity
+      - Publicity
+      secondary:
+      - Personal
+    notes: Mapped from the existing inventory as a Diwani display font.
+    review_status: initial_mapping_from_inventory
+  diwani_letter:
+    family: Diwani Letter
+    style_family: Diwani
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/diwani/diwani-letter.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Diwani > Diwani
+      secondary: []
+    recommended_use:
+    - ceremonial_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Identity
+      - Publicity
+      secondary:
+      - Personal
+    notes: Mapped from the existing inventory as a Diwani display font.
+    review_status: initial_mapping_from_inventory
+  hawi_diwany:
+    family: Hawi Diwany
+    style_family: Diwani
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/hawi-diwany/hawi-t-diwany.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Diwani > Diwani
+      secondary: []
+    recommended_use:
+    - ceremonial_display
+    - certificates
+    - invitations
+    - decorative_headings
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Identity
+      - Publicity
+      secondary:
+      - Personal
+    notes: Mapped from the existing inventory as a Diwani display font.
+    review_status: initial_mapping_from_inventory
+  hussaini_nastaleeq:
+    family: Hussaini Nastaleeq
+    style_family: Nastaliq
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/hussaini-nastaleeq/hussaini-nastaleeq.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Nastaliq / Farsi > Persian Nastaliq
+      secondary:
+      - Nastaliq / Farsi > Urdu Nastaliq
+    recommended_use:
+    - urdu_text
+    - persian_text
+    - heritage_documents
+    - display_text
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publications
+      secondary:
+      - Personal
+      - Correspondence
+    notes: Mapped from the existing inventory as a Nastaliq font.
+    review_status: initial_mapping_from_inventory
+  pak_nastaleeq:
+    family: Pak Nastaleeq
+    style_family: Nastaliq
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/pak-nastaleeq/pak-nastaleeq.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Nastaliq / Farsi > Urdu Nastaliq
+      secondary: []
+    recommended_use:
+    - urdu_text
+    - persian_text
+    - heritage_documents
+    - display_text
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      - Publications
+      secondary:
+      - Personal
+      - Correspondence
+    notes: Mapped from the existing inventory as a Nastaliq font.
+    review_status: initial_mapping_from_inventory
+  raqq:
+    family: Raqq
+    style_family: Historical Riqa' / Raqq
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/raqq/raqq.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Tawqi' and historical Riqa' > Historical Riqa'
+      secondary:
+      - Ruq'ah > Formalized Ruq'ah type
+    recommended_use:
+    - historical_style
+    - display_text
+    document_type_mapping:
+      primary:
+      - Historical & Cultural
+      secondary:
+      - Personal
+      - Education
+    notes: Mapped from the existing inventory; exact historical/style classification should be manually reviewed.
+    review_status: initial_mapping_from_inventory
+  rana_kufi:
+    family: Rana Kufi
+    style_family: Kufi-derived
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/rana-kufi/rana-kufi.otf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Kufi-derived and angular traditions > Contemporary Kufi
+      secondary: []
+    recommended_use:
+    - headings
+    - branding
+    - signage
+    - short_display_text
+    document_type_mapping:
+      primary:
+      - Publicity
+      - Digital-Native
+      - Identity
+      secondary:
+      - Logistics
+      - Reports
+    notes: Mapped from the existing inventory as a Kufi-derived font.
+    review_status: initial_mapping_from_inventory
+  grand_kufi_mazar:
+    family: Grand Kufi Mazar
+    style_family: Ornamented / square Kufi
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/grand-kufi-mazar/grand-kufi-mazar.ttf
+    scripts:
+    - ar
+    weights:
+    - 400
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-A
+    - Arabic Presentation Forms-B
+    taxonomy_membership:
+      primary:
+      - Kufi-derived and angular traditions > Square Kufi
+      secondary:
+      - Kufi-derived and angular traditions > Ornamented Kufi
+    recommended_use:
+    - decorative_display
+    - logos
+    - cultural_posters
+    document_type_mapping:
+      primary:
+      - Publicity
+      - Historical & Cultural
+      secondary:
+      - Digital-Native
+      - Identity
+    notes: Mapped from the existing inventory as an ornamented or square Kufi font; exact subclass should be manually reviewed.
+    review_status: initial_mapping_from_inventory
+  qatar_2022:
+    family: Qatar 2022
+    style_family: Branding / event display Arabic
+    availability_status: candidate_unverified
+    license: license_to_verify
+    source: existing inventory / source to verify
+    download_page_url: 
+    direct_download_url: 
+    local_paths:
+      path: files/qatar2022/qatar2022-bold.ttf
+    scripts:
+    - ar
+    - en
+    weights:
+    - 700
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Arabic Presentation Forms-B
+    - Basic Latin
+    taxonomy_membership:
+      primary:
+      - Decorative and experimental Arabic display > Bilingual / cross-script hybrid
+      secondary:
+      - Decorative and experimental Arabic display > Constructed / modular display
+      - Kufi-derived and angular traditions > Contemporary Kufi
+    recommended_use:
+    - signage
+    - branding
+    - bilingual_display
+    - posters
+    document_type_mapping:
+      primary:
+      - Publicity
+      - Digital-Native
+      secondary:
+      - Identity
+      - Visual-Technical
+    notes: Mapped from the existing inventory as a bilingual display/signage font.
+    review_status: initial_mapping_from_inventory
+  noto_sans:
+    family: Noto Sans
+    style_family: Latin fallback
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts / Noto Fonts
+    download_page_url: https://fonts.google.com/noto/specimen/Noto+Sans
+    direct_download_url: 
+    local_paths:
+      path: files/noto/NotoSans-Regular.ttf
+    scripts:
+    - en
+    weights:
+    - 400
+    - 700
+    styles:
+    - normal
+    - italic
+    declared_blocks:
+    - Basic Latin
+    - Latin-1 Supplement
+    - Latin Extended-A
+    taxonomy_membership:
+      primary: []
+      secondary: []
+    recommended_use:
+    - latin_fallback
+    - bilingual_documents
+    document_type_mapping:
+      primary:
+      - Digital-Native
+      - Reports
+      secondary:
+      - Correspondence
+    notes: Supporting Latin fallback font; kept in registry but not placed under Arabic type taxonomy.
+    review_status: initial_mapping_from_inventory
+    script_role: latin_fallback_support
+  playpen_sans_arabic:
+    family: Playpen Sans Arabic
+    style_family: Modern casual handwriting
+    availability_status: open_source_downloadable
+    license: SIL Open Font License 1.1
+    source: Google Fonts / TypeTogether
+    download_page_url: https://fonts.google.com/specimen/Playpen+Sans+Arabic
+    source_repository_url: https://github.com/TypeTogether/Playpen-Sans
+    direct_download_url: 
+    local_paths: {}
+    scripts:
+    - ar
+    - en
+    weights:
+    - 100
+    - 200
+    - 300
+    - 400
+    - 500
+    - 600
+    - 700
+    - 800
+    styles:
+    - normal
+    declared_blocks:
+    - Arabic
+    - Basic Latin
+    - Latin-1 Supplement
+    taxonomy_membership:
+      primary:
+      - Casual handwritten Arabic > Playful / educational handwriting
+      secondary: []
+    recommended_use:
+    - educational_content
+    - personal_documents
+    - childrens_content
+    - casual_digital_content
+    document_type_mapping:
+      primary:
+      - Education
+      - Personal
+      - Digital-Native
+      secondary:
+      - Publicity
+      - Correspondence
+    notes: Open-source variable Arabic and Latin handwriting typeface with automatic glyph variation and Ruq'ah alternates; not a historical manuscript font.
+    review_status: source_and_license_verified_font_not_yet_staged
+    last_verified: '2026-09-24'

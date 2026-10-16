@@ -710,6 +710,7 @@ impl StyleSheet {
             ..Default::default()
         });
         s.styles.extend(table_styles());
+        s.styles.extend(hadith_styles());
         s
     }
 
@@ -728,6 +729,28 @@ impl StyleSheet {
         let mut v: Vec<&Style> = self.styles.iter().filter(|s| s.quick && !s.hidden && s.kind != StyleKind::Table).collect();
         v.sort_by_key(|s| (s.priority.unwrap_or(99), s.name.clone()));
         v
+    }
+
+    /// The Quick Styles gallery grouped by language/section: (section title, styles). Quran/Hadith
+    /// styles come first (RTL/Arabic templates get priority in a document crafted around them),
+    /// then English Latin-script styles. Keeps the inner order from [`StyleSheet::gallery`].
+    pub fn gallery_sectioned(&self) -> Vec<(StyleSection, Vec<&Style>)> {
+        let gallery = self.gallery();
+        let (mut english, mut hadith): (Vec<&Style>, Vec<&Style>) = (Vec::new(), Vec::new());
+        for s in gallery {
+            match style_section(&s.id) {
+                StyleSection::QuranHadith => hadith.push(s),
+                StyleSection::English => english.push(s),
+            }
+        }
+        let mut out = Vec::new();
+        if !hadith.is_empty() {
+            out.push((StyleSection::QuranHadith, hadith));
+        }
+        if !english.is_empty() {
+            out.push((StyleSection::English, english));
+        }
+        out
     }
     /// The `based_on` chain from the root down to `id` (bounded, cycle-safe).
     pub fn chain(&self, id: &str) -> Vec<&Style> {
@@ -913,6 +936,177 @@ fn table_styles() -> Vec<Style> {
         ));
     }
     v
+}
+
+/// Which section of the Styles gallery a style belongs to. Styles are grouped so Arabic/RTL
+/// hadith templates sit together, separate from the English Latin-script defaults.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum StyleSection {
+    English,
+    QuranHadith,
+}
+
+impl StyleSection {
+    /// Human-facing section title used in the gallery and the Styles pane.
+    pub fn title(self) -> &'static str {
+        match self {
+            StyleSection::English => "English",
+            StyleSection::QuranHadith => "Quran / Hadith",
+        }
+    }
+
+    /// Sample text to preview styles of this section in. English uses the gallery's traditional
+    /// `AaBbCcDd`; Quran/Hadith uses `ابجد هوز` (the first six Arabic letters, the Latin equivalent).
+    pub fn sample_text(self) -> &'static str {
+        match self {
+            StyleSection::English => "AaBbCcDd",
+            StyleSection::QuranHadith => "ابجد هوز",
+        }
+    }
+}
+
+/// Which section a built-in style id belongs to. Only the hadith/Arabic styles are recognised
+/// as `QuranHadith`; every other id (including document-defined styles whose id doesn't match)
+/// falls into `English` by default. Keep in sync with [`hadith_styles`].
+pub fn style_section(id: &str) -> StyleSection {
+    const QURAN_HADITH_IDS: &[&str] = &["QuranVerse", "HadithTitleL4", "RefStyle", "NarStyle", "ArabicText", "GrayTable"];
+    if QURAN_HADITH_IDS.contains(&id) {
+        StyleSection::QuranHadith
+    } else {
+        StyleSection::English
+    }
+}
+
+/// Styles extracted from the hadith-document template (نمونه حدیثی برای تعیین فرمت اجزاء حدیث):
+/// a right-to-left Arabic/Persian layout used for annotating hadith components. Each style
+/// mirrors the corresponding `w:style` in the source document's `styles.xml` (font sizes are
+/// in whole points; the OOXML half-point values are halved).
+///
+///   - `QuranVerse`     — character run for Qur'anic quotations: Amiri Quran 12 pt, Islamic green
+///     (#006400). Added on top of the source template because Qur'anic verses conventionally use a
+///     distinct colour and a Qur'anic Naskh face.
+///   - `HadithTitleL4`  — paragraph, bidi, Niloufaraneh 12 pt bold, red (#C00000), outline level 3.
+///     The source asked for `B Lotus`; replaced with Niloufaraneh so the gallery previews render in
+///     the bundled font rather than falling back.
+///   - `RefStyle`       — character run for isnad references: Niloufaraneh 8 pt, dark blue (#2A415C).
+///   - `NarStyle`       — character run for narrator names: Niloufaraneh 8 pt, dark red (#780000).
+///   - `ArabicText`     — character run for Arabic body text: Niloufaraneh 12 pt, deep blue (#1D216D).
+///     The source document asked for "A-1.1" with a "B Badr" complex-script fallback; both have been
+///     replaced with Niloufaraneh (an open calligraphic Arabic typeface the project bundles).
+///   - `GrayTable`      — table style with right-aligned cells for RTL layout.
+fn hadith_styles() -> Vec<Style> {
+    let hadith_red = Rgb(0xC0, 0x00, 0x00);
+    let ref_blue = Rgb(0x2A, 0x41, 0x5C);
+    let nar_red = Rgb(0x78, 0x00, 0x00);
+    let arabic_blue = Rgb(0x1D, 0x21, 0x6D);
+    let quran_green = Rgb(0x00, 0x64, 0x00);
+    let c_style = |id: &str, name: &str, prio: u32, c: CharProps| Style {
+        id: id.into(),
+        name: name.into(),
+        kind: StyleKind::Character,
+        based_on: Some("DefaultParagraphFont".into()),
+        chr: c,
+        priority: Some(prio),
+        quick: true,
+        builtin: true,
+        ..Default::default()
+    };
+    vec![
+        c_style(
+            "QuranVerse",
+            "Quran",
+            39,
+            CharProps {
+                font: Some("Amiri Quran".into()),
+                size: Some(12.0),
+                bold: Some(false),
+                italic: Some(false),
+                color: Some(TextColor::Rgb(quran_green)),
+                rtl: Some(true),
+                ..CharProps::default()
+            },
+        ),
+        Style {
+            id: "HadithTitleL4".into(),
+            name: "Hadith Title".into(),
+            based_on: Some("Normal".into()),
+            next: Some("Normal".into()),
+            para: ParaProps {
+                bidi: Some(true),
+                space_before: Some(12.0),
+                space_after: Some(0.0),
+                line_spacing: Some(LineSpacing::Multiple(1.0)),
+                outline_level: Some(3),
+                ..ParaProps::default()
+            },
+            chr: CharProps {
+                font: Some("Niloufaraneh".into()),
+                size: Some(12.0),
+                bold: Some(true),
+                color: Some(TextColor::Rgb(hadith_red)),
+                rtl: Some(true),
+                ..CharProps::default()
+            },
+            priority: Some(40),
+            quick: true,
+            ..p_style()
+        },
+        c_style(
+            "RefStyle",
+            "Hadith Reference",
+            41,
+            CharProps {
+                font: Some("Niloufaraneh".into()),
+                size: Some(8.0),
+                bold: Some(false),
+                italic: Some(false),
+                color: Some(TextColor::Rgb(ref_blue)),
+                ..CharProps::default()
+            },
+        ),
+        c_style(
+            "NarStyle",
+            "Hadith Narrator",
+            42,
+            CharProps {
+                font: Some("Niloufaraneh".into()),
+                size: Some(8.0),
+                bold: Some(false),
+                italic: Some(false),
+                color: Some(TextColor::Rgb(nar_red)),
+                ..CharProps::default()
+            },
+        ),
+        c_style(
+            "ArabicText",
+            "Arabic Text",
+            43,
+            CharProps {
+                font: Some("Niloufaraneh".into()),
+                size: Some(12.0),
+                bold: Some(false),
+                italic: Some(false),
+                color: Some(TextColor::Rgb(arabic_blue)),
+                rtl: Some(true),
+                ..CharProps::default()
+            },
+        ),
+        Style {
+            id: "GrayTable".into(),
+            name: "Gray Table".into(),
+            kind: StyleKind::Table,
+            based_on: Some("TableNormal".into()),
+            para: ParaProps { space_after: Some(0.0), line_spacing: Some(LineSpacing::Multiple(1.0)), bidi: Some(true), ..ParaProps::default() },
+            chr: CharProps { size: Some(10.0), ..CharProps::default() },
+            priority: Some(60),
+            builtin: true,
+            table: Some(TableStyleParts {
+                borders: Some(Borders::all(Border { style: BorderStyle::Single, width: 0.5, color: Some(Rgb(0x99, 0x99, 0x99)), space: 0.0 })),
+                ..Default::default()
+            }),
+            ..Default::default()
+        },
+    ]
 }
 
 #[cfg(test)]

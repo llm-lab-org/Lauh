@@ -307,42 +307,57 @@ fn styles(app: &mut WordApp, ui: &mut Ui) {
         let _ = app.run("styles.inspector", json!({}));
     }
     ui.separator();
-    let mut list: Vec<(String, String, bool)> = app
-        .session
-        .doc
-        .styles
-        .styles
-        .iter()
-        .filter(|s| !s.hidden && s.kind != wordcraft_doc::StyleKind::Table)
-        .map(|s| (s.id.clone(), crate::i18n::style_name(s), s.kind == wordcraft_doc::StyleKind::Character))
-        .collect();
-    list.sort_by_key(|s| s.1.to_lowercase());
+    // Group the pane's style list into English / Quran-Hadith sections so hadith templates and
+    // the English defaults are visually separate (same classification as the ribbon gallery).
+    let mut by_section: std::collections::BTreeMap<wordcraft_doc::StyleSection, Vec<(String, String, bool)>> = Default::default();
+    for s in &app.session.doc.styles.styles {
+        if s.hidden || s.kind == wordcraft_doc::StyleKind::Table {
+            continue;
+        }
+        by_section.entry(wordcraft_doc::styles::style_section(&s.id)).or_default().push((
+            s.id.clone(),
+            crate::i18n::style_name(s),
+            s.kind == wordcraft_doc::StyleKind::Character,
+        ));
+    }
+    for entries in by_section.values_mut() {
+        entries.sort_by_key(|s| s.1.to_lowercase());
+    }
     egui::ScrollArea::vertical().show(ui, |ui| {
-        for (id, name, is_char) in list {
-            ui.horizontal(|ui| {
-                let r = ui.selectable_label(id == cur, &name);
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    ui.label(egui::RichText::new(if is_char { "a" } else { "¶" }).weak());
+        for section in [wordcraft_doc::StyleSection::QuranHadith, wordcraft_doc::StyleSection::English] {
+            let Some(entries) = by_section.get(&section) else { continue };
+            if entries.is_empty() {
+                continue;
+            }
+            ui.add_space(2.0);
+            ui.label(egui::RichText::new(section.title()).strong().small());
+            ui.separator();
+            for (id, name, is_char) in entries {
+                ui.horizontal(|ui| {
+                    let r = ui.selectable_label(id == &cur, name);
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.label(egui::RichText::new(if *is_char { "a" } else { "¶" }).weak());
+                    });
+                    if r.clicked() {
+                        let _ = app.run("para.style", json!({"style": id}));
+                        app.canvas.want_focus = true;
+                    }
+                    r.context_menu(|ui| {
+                        if ui.button(tl!("Modify…")).clicked() {
+                            app.dialog = crate::dialogs::Dialog::modify_style(app, id);
+                            ui.close();
+                        }
+                        if ui.button(tl!("Update to Match Selection")).clicked() {
+                            let _ = app.run("styles.updateToMatch", json!({"style": id}));
+                            ui.close();
+                        }
+                        if ui.button(tl!("Delete")).clicked() {
+                            let _ = app.run("styles.delete", json!({"style": id}));
+                            ui.close();
+                        }
+                    });
                 });
-                if r.clicked() {
-                    let _ = app.run("para.style", json!({"style": id}));
-                    app.canvas.want_focus = true;
-                }
-                r.context_menu(|ui| {
-                    if ui.button(tl!("Modify…")).clicked() {
-                        app.dialog = crate::dialogs::Dialog::modify_style(app, &id);
-                        ui.close();
-                    }
-                    if ui.button(tl!("Update to Match Selection")).clicked() {
-                        let _ = app.run("styles.updateToMatch", json!({"style": id}));
-                        ui.close();
-                    }
-                    if ui.button(tl!("Delete")).clicked() {
-                        let _ = app.run("styles.delete", json!({"style": id}));
-                        ui.close();
-                    }
-                });
-            });
+            }
         }
     });
 }

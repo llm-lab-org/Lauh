@@ -55,7 +55,9 @@ fn craft_fonts(dir: &std::path::Path) -> Result<(String, Vec<String>), String> {
         let [family, style, file, scripts, ..] = f.as_slice() else {
             return Err(format!("malformed manifest line: {line}"));
         };
-        if wasm && !(*family == "BIZ UDPGothic" && *style == "Regular") {
+        let is_ui_face = *family == "BIZ UDPGothic" && *style == "Regular";
+        let is_arabic = scripts.split(',').map(str::trim).any(|s| s == "Arab");
+        if wasm && !is_ui_face && !is_arabic {
             continue;
         }
         let path = dir.join(file).canonicalize().map_err(|e| format!("{file}: {e}"))?;

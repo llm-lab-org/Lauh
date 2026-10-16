@@ -590,7 +590,15 @@ pub fn render_text_line(face: &wordcraft_fonts::FontFace, text: &str, size: f32,
     let baseline = margin + ascent * k;
     let mut x = margin;
     let colour = face.has_color_glyphs();
-    for g in wordcraft_fonts::shape(face, text, &[], |c| c) {
+    // Preview strings are single short runs: a dominant-RTL text (any RTL character and no Latin
+    // letters) is painted right-to-left so Arabic/Persian samples read as سلام, not مالس. Mixed
+    // scripts fall back to the previous left-to-right paint used by the font list.
+    let is_latin = |c: char| matches!(c, '\u{0041}'..='\u{005A}' | '\u{0061}'..='\u{007A}');
+    let rtl = text.chars().any(wordcraft_fonts::is_rtl) && !text.chars().any(is_latin);
+    let glyphs = wordcraft_fonts::shape(face, text, &[], |c| c);
+    let order: Box<dyn Iterator<Item = &wordcraft_fonts::ShapedGlyph>> =
+        if rtl { Box::new(glyphs.iter().rev()) } else { Box::new(glyphs.iter()) };
+    for g in order {
         let at = view * Affine::translate((x + g.x_offset as f64 * k, baseline - g.y_offset as f64 * k)) * Affine::scale(k);
         if colour && let Some(d) = color_glyph::drawable(face, g.gid, size * scale as f64, false) {
             color_glyph::draw(&mut ctx, &d, at, upem, color(Rgb(0, 0, 0), 1.0), 1.0);

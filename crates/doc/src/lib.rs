@@ -54,7 +54,7 @@ pub use numbering::{ListKind, Numbering};
 pub use para::{InlineObject, Paragraph, Run};
 pub use props::{Align, CharProps, ParaProps, Rgb, TextColor};
 pub use section::SectionProps;
-pub use styles::{Style, StyleKind, StyleSheet};
+pub use styles::{Style, StyleKind, StyleSection, StyleSheet};
 pub use table::{Cell, Row, Table};
 
 #[derive(Debug, thiserror::Error, Clone, PartialEq)]

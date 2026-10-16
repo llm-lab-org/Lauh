@@ -214,17 +214,20 @@ fn content(app: &mut WordApp, ui: &mut egui::Ui, t: &Tokens) {
     row(ui, app, &|ui, app| {
         let font = st.get("font").and_then(Value::as_str).unwrap_or("").to_string();
         let font = app.previews.font_shown(&font);
+        app.previews.drain_section_toggles(ui.ctx());
         let fams = app.previews.families();
         let prev = app.previews.font_preview_fn();
         if let Some(f) = widgets::font_combo(ui, "mini_font", COMBO_FONT_W, &font, &fams, Some(&*prev)) {
-            let _ = if f == crate::widgets::ADD_FONT {
-                app.run("font.add", json!({}))
+            if widgets::section_title(&f).is_some() {
+                // Section-header clicks are handled via the toggle queue; never applied as a font.
+            } else if f == crate::widgets::ADD_FONT {
+                let _ = app.run("font.add", json!({}));
             } else if f == crate::widgets::LOAD_SYSTEM_FONTS {
-                app.run("font.loadSystem", json!({}))
+                let _ = app.run("font.loadSystem", json!({}));
             } else {
                 let f = app.previews.font_stored(&f);
-                app.run("format.font", json!({"name": f}))
-            };
+                let _ = app.run("format.font", json!({"name": f}));
+            }
         }
         let size =
             st.get("size").and_then(Value::as_f64).map(|s| if s.fract() == 0.0 { format!("{s:.0}") } else { s.to_string() }).unwrap_or_default();

@@ -243,6 +243,12 @@ impl FontFace {
     }
 }
 
+/// Does `face` cover the core Arabic letters (ا ب م ن)? Used to classify fonts for the font bar's
+/// Arabic section.
+fn covers_arabic(face: &FontFace) -> bool {
+    ['\u{0627}', '\u{0628}', '\u{0645}', '\u{0646}'].iter().all(|c| face.covers(*c))
+}
+
 /// Is `f` an East Asian (Chinese, Japanese or Korean) font: do its OS/2 code pages say so
 /// (Shift-JIS, GB2312, Wansung, Big5, Johab), or, without them, does it map common ideographs?
 fn east_asian_font(f: &skrifa::FontRef<'_>) -> bool {
@@ -981,6 +987,15 @@ impl FontDb {
         let mut v: Vec<String> = self.read_faces().iter().filter(|f| f.is_east_asian()).map(|f| f.family.clone()).collect();
         #[cfg(not(target_arch = "wasm32"))]
         v.extend(self.read_catalog().iter().filter(|c| c.east_asian).map(|c| c.family.clone()));
+        v.sort_by_key(|a| a.to_lowercase());
+        v.dedup_by(|a, b| a.eq_ignore_ascii_case(b));
+        v
+    }
+
+    /// Every loaded family covering the Arabic script (ا ب م ن). Catalog-only (unloaded) families
+    /// are not inspected.
+    pub fn arabic_families_all(&self) -> Vec<String> {
+        let mut v: Vec<String> = self.read_faces().iter().filter(|f| covers_arabic(f)).map(|f| f.family.clone()).collect();
         v.sort_by_key(|a| a.to_lowercase());
         v.dedup_by(|a, b| a.eq_ignore_ascii_case(b));
         v

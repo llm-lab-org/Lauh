@@ -503,6 +503,22 @@ pub const ADD_FONT: &str = "\u{1}font.add";
 /// caller runs `font.loadSystem`.
 pub const LOAD_SYSTEM_FONTS: &str = "\u{1}font.loadSystem";
 
+/// A combo entry whose name begins with [`SECTION_PREFIX`] is a non-selectable section header:
+/// the preview closure paints it as a label, keyboard navigation skips it, and name queries never
+/// match it. Caller treats a returned value starting with this prefix as a no-op.
+pub const SECTION_PREFIX: &str = "\u{1}section:";
+
+/// Is `name` a section-header entry (see [`SECTION_PREFIX`])?
+pub fn is_section_header(name: &str) -> bool {
+    name.starts_with(SECTION_PREFIX)
+}
+
+/// If `name` is a section-header entry, return the section's human title (`"Arabic"`, `"Persian"`,
+/// `"English"`). Returns `None` for non-header entries.
+pub fn section_title(name: &str) -> Option<&str> {
+    name.strip_prefix(SECTION_PREFIX)
+}
+
 /// The font box: a [`combo`] where typing lists the matching families under the field (#359).
 /// Its list ends with Add Font… ([`ADD_FONT`]).
 /// Up/Down move the highlight, Enter or a click applies the highlighted family ("arial" applies
@@ -520,7 +536,9 @@ pub fn font_combo(
 }
 
 /// Indices of the `items` matching `query`, ignoring case: exact matches, then the names starting
-/// with it, then those containing it, each group in list order. A blank query matches everything.
+/// with it, then those containing it, each group in list order. A blank query matches every entry
+/// (including [`SECTION_PREFIX`] section headers, so they visually structure the full list); a
+/// non-blank query skips headers so they never appear mid-filter.
 pub fn font_matches(query: &str, items: &[String]) -> Vec<usize> {
     let q = query.trim().to_lowercase();
     if q.is_empty() {
@@ -528,6 +546,9 @@ pub fn font_matches(query: &str, items: &[String]) -> Vec<usize> {
     }
     let (mut exact, mut prefix, mut inner) = (Vec::new(), Vec::new(), Vec::new());
     for (i, it) in items.iter().enumerate() {
+        if is_section_header(it) {
+            continue;
+        }
         let name = it.to_lowercase();
         if name == q {
             exact.push(i);
@@ -628,10 +649,23 @@ fn combo_impl(
                 _ => s.highlight.saturating_sub(1),
             }
             .min(last);
+            // Arrow keys skip section headers so Up/Down lands only on real font names.
+            let is_header_at = |h: usize| s.matches.get(h).and_then(|&i| items.get(i)).is_some_and(|n| is_section_header(n));
+            if step != 0 {
+                while is_header_at(s.highlight) {
+                    s.highlight = match step {
+                        1.. => s.highlight.saturating_add(1).min(last),
+                        _ => s.highlight.saturating_sub(1),
+                    };
+                    if s.highlight == 0 || s.highlight == last {
+                        break;
+                    }
+                }
+            }
             if enter {
                 let picked = s.matches.get(s.highlight).and_then(|&i| items.get(i));
                 out = Some(match picked {
-                    Some(name) if !text.trim().is_empty() => name.clone(),
+                    Some(name) if !text.trim().is_empty() && !is_section_header(name) => name.clone(),
                     _ => text.clone(),
                 });
                 s.open = false;
@@ -658,8 +692,15 @@ fn combo_impl(
         let arrow_box = egui::epaint::RectShape::new(under, ar_radius, fill, Stroke::new(ARROW_BORDER, t.input_border), egui::StrokeKind::Inside);
         ui.painter().set(arrow_bg, arrow_box);
         icons::paint(ui.painter(), Rect::from_center_size(ar.center(), vec2(DROPDOWN, DROPDOWN)), "dropdown", t.icon, t.accent);
-        // The list drops from the box's left edge, as in Word, not from the arrow (#535).
-        egui::Popup::menu(&aresp).anchor(resp.rect.union(ar)).show(|ui| {
+        // The list drops from the box's left edge, as in Word, not from the arrow (#535). The
+        // close behavior is explicit: egui's default (CloseOnClick) would close the dropdown on
+        // any click inside — including the font-bar section headers' chevrons. CloseOnClickOutside
+        // keeps the dropdown open on inside clicks; combo_list calls `ui.close()` below when a
+        // font is actually picked, so selection still closes normally.
+        egui::Popup::menu(&aresp)
+            .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+            .anchor(resp.rect.union(ar))
+            .show(|ui| {
             if let Some(v) = combo_list(ui, width, current, items, preview) {
                 out = Some(v);
                 ui.close();
@@ -758,7 +799,9 @@ fn list_rows<'a>(
     }
     let fill = Tokens::get(ui.ctx()).checked;
     let shown = area.show_rows(ui, row_h, n, |ui, range| {
-        ui.set_min_width(width + 60.0);
+        // Dropdown is wider than the field so section headers, chevron, sample text, and family
+        // name all fit on one row without clipping (font bar is often 150 pt wide — too narrow).
+        ui.set_min_width((width + 60.0).max(320.0));
         for k in range {
             let Some(it) = item(k) else { continue };
             let lit = highlight == Some(k);

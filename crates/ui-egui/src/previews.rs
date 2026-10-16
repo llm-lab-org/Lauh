@@ -1,7 +1,7 @@
 //! Rendered previews: the Styles gallery, font menu entries, table and style-set tiles. Each is a
 //! tiny document laid out and rasterised by the real engine, cached as a texture.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use egui::{Rect, Response, Sense, Stroke, TextureHandle, Ui, pos2, vec2};
@@ -23,12 +23,88 @@ pub struct Previews {
     english_names: HashMap<String, String>,
     /// The Chinese, Japanese and Korean fonts of the font list (the Asian text font box).
     east_asian: Option<Vec<String>>,
+    /// Lowercase family names classified as Arabic-script (covers Arabic letters).
+    arabic_set: HashSet<String>,
+    /// Lowercase family names classified as Persian-script (Arabic-script + explicit Persian hint).
+    persian_set: HashSet<String>,
+    /// Section title → collapsed. Missing key means expanded. Clicking a section header toggles.
+    collapsed: HashMap<String, bool>,
     styles_hash: (u64, u64),
     /// Previews rendered this frame (rendering is spread over frames).
     budget: std::cell::Cell<u32>,
     frame: u64,
     /// The Equation tab's pictures, packed into one texture (#1002).
     math: MathAtlas,
+}
+
+/// Sample text used to preview Arabic- and Persian-script font entries in the font bar.
+const SCRIPT_SAMPLE_AR_FA: &str = "سلام";
+
+/// Section titles the font bar emits.
+pub const SECTION_PERSIAN: &str = "Persian";
+pub const SECTION_ARABIC: &str = "Arabic";
+pub const SECTION_ENGLISH: &str = "English";
+
+/// `egui::Id` of the shared queue the font-bar preview writes section-toggle requests to.
+fn section_toggle_queue_id() -> egui::Id {
+    egui::Id::new("wordcraft::font_section_toggle_queue")
+}
+
+/// One cell of the Styles gallery: either a style preview tile or a non-selectable section
+/// label (English, Quran/Hadith) that groups the tiles beside it.
+enum GalleryTile {
+    SectionLabel(wordcraft_doc::StyleSection),
+    Style { id: String, name: String, section: wordcraft_doc::StyleSection, kind: wordcraft_doc::StyleKind },
+}
+
+/// Family-name heuristic for the Persian section: Borna's B-series (`B Yekan`, `B Koodak`, …),
+/// family names mentioning farsi/persian/nastaliq/urdu, or specific known Persian/Urdu families
+/// (Mirza, Markazi Text, Lalezar, Vazir, Vazirmatn, …). Used on top of Arabic-script coverage.
+pub fn is_persian_family_name(lc_english_name: &str) -> bool {
+    const KNOWN: &[&str] = &["mirza", "markazi text", "lalezar", "vazir", "vazirmatn", "iranian sans", "iran sans", "estedad"];
+    lc_english_name.starts_with("b ")
+        || lc_english_name.contains("farsi")
+        || lc_english_name.contains("persian")
+        || lc_english_name.contains("nastaliq")
+        || lc_english_name.contains("urdu")
+        || KNOWN.iter().any(|k| lc_english_name == *k)
+}
+
+/// Build a flat family list grouped into Persian / Arabic / English script sections (in that
+/// order), each preceded by a [`crate::widgets::SECTION_PREFIX`] header. Collapsed sections keep
+/// their header but omit the entries. Sections with no members are omitted entirely.
+fn group_by_script(
+    families: &[String],
+    arabic: &HashSet<String>,
+    persian: &HashSet<String>,
+    collapsed: &HashMap<String, bool>,
+) -> Vec<String> {
+    let (mut farsi, mut arab, mut rest): (Vec<&String>, Vec<&String>, Vec<&String>) = (Vec::new(), Vec::new(), Vec::new());
+    for f in families {
+        let lc = f.to_lowercase();
+        if persian.contains(&lc) {
+            farsi.push(f);
+        } else if arabic.contains(&lc) {
+            arab.push(f);
+        } else {
+            rest.push(f);
+        }
+    }
+    let mut out = Vec::with_capacity(families.len() + 3);
+    let section = |title: &str| format!("{}{title}", crate::widgets::SECTION_PREFIX);
+    let push = |out: &mut Vec<String>, title: &str, items: Vec<&String>| {
+        if items.is_empty() {
+            return;
+        }
+        out.push(section(title));
+        if !collapsed.get(title).copied().unwrap_or(false) {
+            out.extend(items.into_iter().cloned());
+        }
+    };
+    push(&mut out, SECTION_PERSIAN, farsi);
+    push(&mut out, SECTION_ARABIC, arab);
+    push(&mut out, SECTION_ENGLISH, rest);
+    out
 }
 
 /// Side of each square texture page the equation pictures share, in pixels.
@@ -154,7 +230,9 @@ impl MathAtlas {
 
 impl Previews {
     /// The font list: installed families, each by its name in the interface language when it has
-    /// one (宋体 for SimSun in Chinese, #505), like Word's.
+    /// one (宋体 for SimSun in Chinese, #505), like Word's. Entries are grouped under three
+    /// non-selectable section headers ([`crate::widgets::SECTION_PREFIX`]): Arabic, Persian, English —
+    /// so the font bar shows script sections. Empty sections are omitted.
     pub fn families(&mut self) -> Vec<String> {
         let lang = crate::i18n::current().code();
         let generation = wordcraft_fonts::FontDb::global().generation();
@@ -172,10 +250,39 @@ impl Previews {
             let names = db.localized_names(lang);
             self.local_names = names.iter().map(|(e, l)| (e.to_lowercase(), l.clone())).collect();
             self.english_names = names.into_iter().map(|(e, l)| (l, e)).collect();
-            self.families = Some((lang, f));
+            // Any face covering Arabic letters is Arabic; a family hinted as Persian (B-series,
+            // "farsi", "persian", "nastaliq" in the English name) is additionally classified Persian.
+            let arabic_english: HashSet<String> = db.arabic_families_all().into_iter().map(|n| n.to_lowercase()).collect();
+            let as_english = |shown: &str| -> String {
+                self.english_names.get(shown).cloned().unwrap_or_else(|| shown.to_string()).to_lowercase()
+            };
+            self.arabic_set = f.iter().filter(|n| arabic_english.contains(&as_english(n))).map(|n| n.to_lowercase()).collect();
+            self.persian_set = f
+                .iter()
+                .filter(|n| arabic_english.contains(&as_english(n)) && is_persian_family_name(&as_english(n)))
+                .map(|n| n.to_lowercase())
+                .collect();
+            let grouped = group_by_script(&f, &self.arabic_set, &self.persian_set, &self.collapsed);
+            self.families = Some((lang, grouped));
             self.east_asian = None;
         }
         self.families.as_ref().map(|(_, f)| f.clone()).unwrap_or_default()
+    }
+
+    /// Drain the pending section-toggle signals the font-bar preview wrote via
+    /// [`Previews::font_preview_fn`], apply them to the collapsed map, and invalidate the family
+    /// cache. Call once per frame before [`Previews::families`] so a header click shows up on this
+    /// frame's grouped list.
+    pub fn drain_section_toggles(&mut self, ctx: &egui::Context) {
+        let pending: Vec<String> = ctx.data_mut(|d| d.remove_temp::<Vec<String>>(section_toggle_queue_id()).unwrap_or_default());
+        if pending.is_empty() {
+            return;
+        }
+        for section in pending {
+            let now = self.collapsed.get(&section).copied().unwrap_or(false);
+            self.collapsed.insert(section, !now);
+        }
+        self.families = None;
     }
 
     /// The Font dialog's Asian text font list: the installed Chinese, Japanese and Korean fonts,
@@ -224,10 +331,49 @@ impl Previews {
 
     /// A closure drawing a font-menu entry in its own face.
     pub fn font_preview_fn(&mut self) -> Box<dyn Fn(&mut Ui, &str) -> Response> {
-        Box::new(|ui: &mut Ui, name: &str| {
-            let key = format!("font:{name}");
+        let arabic = self.arabic_set.clone();
+        let persian = self.persian_set.clone();
+        let collapsed = self.collapsed.clone();
+        Box::new(move |ui: &mut Ui, name: &str| {
+            // Section headers (SECTION_PREFIX) paint a chevron + title. A click posts the section
+            // name to the shared toggle queue (Previews::drain_section_toggles reads it next frame)
+            // and we return a hover-only Response so the combo dropdown stays open.
+            if let Some(title) = name.strip_prefix(crate::widgets::SECTION_PREFIX) {
+                let (r, resp) = ui.allocate_exact_size(vec2(320.0, crate::widgets::COMBO_PREVIEW_ROW_H), Sense::hover());
+                let t = Tokens::get(ui.ctx());
+                // Manual pointer + click detection — avoids registering an interactive widget
+                // inside the combo's menu popup (which would be treated as a menu-item click and
+                // close the dropdown).
+                let pointer = ui.input(|i| i.pointer.interact_pos());
+                let hovered = pointer.is_some_and(|p| r.contains(p));
+                let clicked = hovered && ui.input(|i| i.pointer.primary_released());
+                if hovered {
+                    ui.painter().rect_filled(r, 3.0, t.hover);
+                }
+                let chev = if collapsed.get(title).copied().unwrap_or(false) { "▸" } else { "▾" };
+                ui.painter().text(pos2(r.min.x + 6.0, r.center().y), egui::Align2::LEFT_CENTER, chev, regular(11.0), t.icon);
+                ui.painter().text(pos2(r.min.x + 20.0, r.center().y), egui::Align2::LEFT_CENTER, title, crate::theme::semibold(11.0), t.icon);
+                if clicked {
+                    let title = title.to_string();
+                    ui.ctx().data_mut(|d| {
+                        let q: &mut Vec<String> = d.get_temp_mut_or_default(section_toggle_queue_id());
+                        q.push(title);
+                    });
+                    ui.ctx().request_repaint();
+                }
+                // Hover-only Response: combo_impl sees .clicked() == false, dropdown stays open.
+                return resp;
+            }
+            let key_lc = name.to_lowercase();
+            let script_entry = arabic.contains(&key_lc) || persian.contains(&key_lc);
+            let (sample, key_text) = if script_entry {
+                (SCRIPT_SAMPLE_AR_FA, SCRIPT_SAMPLE_AR_FA)
+            } else {
+                (name, name)
+            };
+            let key = format!("font:{name}:{key_text}");
             let tex: Option<TextureHandle> = ui.ctx().data(|d| d.get_temp::<TextureHandle>(egui::Id::new(&key)));
-            let (r, resp) = ui.allocate_exact_size(vec2(260.0, crate::widgets::COMBO_PREVIEW_ROW_H), Sense::click());
+            let (r, resp) = ui.allocate_exact_size(vec2(320.0, crate::widgets::COMBO_PREVIEW_ROW_H), Sense::click());
             let t = Tokens::get(ui.ctx());
             if resp.hovered() {
                 ui.painter().rect_filled(r, 3.0, t.hover);
@@ -248,7 +394,9 @@ impl Previews {
                     return None;
                 }
                 let ppp = ui.ctx().pixels_per_point();
-                let mut img = font_entry_image(name, ppp);
+                // Arabic/Persian entries use a narrower سلام sample so the family name fits beside it.
+                let max_w = if script_entry { 70.0 } else { 244.0 };
+                let mut img = font_entry_image_sized(name, sample, max_w, ppp);
                 ink_mask(&mut img);
                 let h = ui.ctx().load_texture(&key, img, egui::TextureOptions::LINEAR);
                 ui.ctx().data_mut(|d| d.insert_temp(egui::Id::new(&key), h.clone()));
@@ -263,6 +411,16 @@ impl Previews {
                         Rect::from_min_max(pos2(0.0, 0.0), pos2(1.0, 1.0)),
                         t.text,
                     );
+                    if script_entry {
+                        // Family name beside the Arabic/Persian sample so the entry carries both.
+                        ui.painter().text(
+                            pos2(r.min.x + 6.0 + sz.x + 8.0, r.center().y),
+                            egui::Align2::LEFT_CENTER,
+                            name,
+                            regular(12.0),
+                            t.text,
+                        );
+                    }
                 }
                 None => {
                     ui.painter().text(pos2(r.min.x + 8.0, r.center().y), egui::Align2::LEFT_CENTER, name, regular(12.0), t.text);
@@ -398,12 +556,23 @@ pub fn ink_mask(img: &mut egui::ColorImage) {
 /// through the Font box grew memory by tens of megabytes. A name the font has no glyphs for (a
 /// symbol font's), or a font that can't be read, shows in the default face.
 pub fn font_entry_image(name: &str, ppp: f32) -> egui::ColorImage {
+    font_entry_image_text(name, name, ppp)
+}
+
+/// A font list entry rendered as `text` in `family`'s own face. Lets Arabic/Persian entries
+/// preview with a script sample (سلام) while using the family's own face. `max_w` caps the texture
+/// width so the caller can place the family name beside a narrow Arabic sample.
+pub fn font_entry_image_text(family: &str, text: &str, ppp: f32) -> egui::ColorImage {
+    font_entry_image_sized(family, text, 244.0, ppp)
+}
+
+pub fn font_entry_image_sized(family: &str, text: &str, max_w: f32, ppp: f32) -> egui::ColorImage {
     let db = wordcraft_fonts::FontDb::global();
     let face = db
-        .preview_face(name)
-        .filter(|f| name.chars().filter(|c| !c.is_whitespace()).all(|c| f.covers(c)))
+        .preview_face(family)
+        .filter(|f| text.chars().filter(|c| !c.is_whitespace()).all(|c| f.covers(c)))
         .unwrap_or_else(|| db.face(wordcraft_fonts::FALLBACK_FAMILY, "Regular"));
-    let img = wordcraft_render::render_text_line(&face, name, 13.0, 244.0, 22.0, 2.0, ppp);
+    let img = wordcraft_render::render_text_line(&face, text, 13.0, max_w, 22.0, 2.0, ppp);
     egui::ColorImage::from_rgba_unmultiplied([img.width as usize, img.height as usize], &img.to_straight())
 }
 
@@ -504,20 +673,44 @@ pub fn style_preview(app: &mut WordApp, ui: &mut Ui, id: &str, ty: &str, size: e
     }
 }
 
-/// The Home tab's Styles gallery.
+/// The Home tab's Styles gallery, rendered in sections (English → Quran/Hadith). Each entry is a
+/// `GalleryTile::Style` or a `GalleryTile::SectionLabel`; section labels are non-selectable
+/// chips that take up one tile's worth of horizontal space between the groups.
 pub fn style_gallery(app: &mut WordApp, ui: &mut Ui, state: &Value) {
     let t = Tokens::get(ui.ctx());
     let current = state.get("style").and_then(Value::as_str).unwrap_or("Normal").to_string();
-    let styles: Vec<(String, String)> = app.session.doc.styles.gallery().iter().map(|s| (s.id.clone(), crate::i18n::style_name(s))).collect();
+    // Build a flat tile list: [SectionLabel("English"), styles…, SectionLabel("Quran/Hadith"), styles…]
+    let mut tiles: Vec<GalleryTile> = Vec::new();
+    for (section, styles) in app.session.doc.styles.gallery_sectioned() {
+        tiles.push(GalleryTile::SectionLabel(section));
+        for s in styles {
+            tiles.push(GalleryTile::Style { id: s.id.clone(), name: crate::i18n::style_name(s), section, kind: s.kind });
+        }
+    }
     let rev = app.session.rev();
     let skey = app.previews.styles_key(&app.session.doc, rev);
     let ppp = ui.ctx().pixels_per_point();
-    let start = ui.data(|d| d.get_temp::<usize>(egui::Id::new("gallery_start"))).unwrap_or(0).min(styles.len().saturating_sub(1));
-    let visible = 6usize;
+    let start = ui.data(|d| d.get_temp::<usize>(egui::Id::new("gallery_start"))).unwrap_or(0).min(tiles.len().saturating_sub(1));
+    // Wider gallery so the Quran/Hadith section and the start of the English section fit together
+    // without scrolling.
+    let visible = 10usize;
     let (area, _) = ui.allocate_exact_size(vec2(visible as f32 * 76.0 + 18.0, crate::widgets::CONTENT_H), Sense::hover());
     ui.painter().rect(area.shrink(1.0), 4.0, t.input, Stroke::new(1.0, t.border), egui::StrokeKind::Inside);
-    for (k, (id, name)) in styles.iter().skip(start).take(visible).enumerate() {
+    for (k, tile) in tiles.iter().skip(start).take(visible).enumerate() {
         let r = Rect::from_min_size(pos2(area.min.x + 3.0 + k as f32 * 76.0, area.min.y + 3.0), vec2(74.0, area.height() - 6.0));
+        if let GalleryTile::SectionLabel(section) = tile {
+            // Decorative tile: a vertical label chip, no click.
+            ui.painter().rect_filled(r.shrink(1.0), 3.0, t.hover);
+            let title = section.title();
+            let mut job = egui::text::LayoutJob::single_section(title.to_string(), egui::TextFormat::simple(crate::theme::semibold(11.0), t.icon));
+            job.wrap = egui::text::TextWrapping::truncate_at_width(r.width() - 6.0);
+            let galley = ui.painter().layout_job(job);
+            let p = pos2(r.center().x - galley.size().x / 2.0, r.center().y - galley.size().y / 2.0);
+            ui.painter().with_clip_rect(r).galley(p, galley, t.icon);
+            continue;
+        }
+        let GalleryTile::Style { id, name, section, kind } = tile else { continue };
+        let (id, name, section, kind) = (id, name, *section, *kind);
         let resp = ui.interact(r, ui.id().with(("style_tile", id)), Sense::click());
         let active = *id == current;
         resp.widget_info(|| egui::WidgetInfo::selected(egui::WidgetType::SelectableLabel, true, active, name));
@@ -528,16 +721,34 @@ pub fn style_gallery(app: &mut WordApp, ui: &mut Ui, state: &Value) {
         }
         let lang = crate::i18n::current().code();
         let dark_page = app.session.view.dark_mode;
-        let key = format!("style:{id}:{skey}:{ppp}:{lang}:{dark_page}");
+        // Quran/Hadith tiles preview with Arabic text (ابجد هوز) — the Arabic equivalent of AaBbCcDd.
+        let sample_text = section.sample_text().to_string();
+        let key = format!("style:{id}:{skey}:{ppp}:{lang}:{dark_page}:{sample_text}");
         let doc = &app.session.doc;
         let tex = app.previews.get_or(ui.ctx(), &key, || {
-            // Sample letters in the interface's script (`АаБбВвГг` in Russian).
-            let mut p = Paragraph::with_text(tl!("AaBbCcDd"), CharProps::default()).styled(id);
+            // Paragraph styles go on the paragraph; character styles must go on the run's CharProps
+            // (otherwise their font/colour/size don't apply because .styled() looks up a para style).
+            let run_chr = if kind == wordcraft_doc::StyleKind::Character {
+                CharProps { style: Some(id.into()), ..CharProps::default() }
+            } else {
+                CharProps::default()
+            };
+            let mut p = Paragraph::with_text(&sample_text, run_chr);
+            if kind == wordcraft_doc::StyleKind::Paragraph {
+                p = p.styled(id);
+            }
             p.props.space_before = Some(0.0);
-            p.props.align = Some(wordcraft_doc::Align::Left);
-            // Keep hanging indents (bullets) but start the first line at the tile's left edge.
+            let is_rtl = section == wordcraft_doc::StyleSection::QuranHadith;
+            if is_rtl {
+                p.props.bidi = Some(true);
+                p.props.align = Some(wordcraft_doc::Align::Right);
+            } else {
+                p.props.align = Some(wordcraft_doc::Align::Left);
+            }
+            // Keep hanging indents (bullets) but start the first line at the tile's left/right edge.
             let first = doc.styles.resolve_para(&p.props).indent_first;
             p.props.indent_left = Some(if first.is_finite() { (-first).max(0.0) } else { 0.0 });
+            p.props.indent_right = Some(0.0);
             p.props.borders = None;
             p.props.shading = None;
             style_snippet(doc, p, 220.0, 30.0, ppp, 1.0, dark_page)
@@ -582,7 +793,7 @@ pub fn style_gallery(app: &mut WordApp, ui: &mut Ui, state: &Value) {
             if *delta == 0 {
                 let _ = app.run("view.stylesPane", json!({"value": true}));
             } else {
-                let n = if *delta < 0 { start.saturating_sub(visible) } else { (start + visible).min(styles.len().saturating_sub(1)) };
+                let n = if *delta < 0 { start.saturating_sub(visible) } else { (start + visible).min(tiles.len().saturating_sub(1)) };
                 ui.data_mut(|d| d.insert_temp(egui::Id::new("gallery_start"), n));
             }
         }
