@@ -403,6 +403,20 @@ pub fn canvas_events(app: &mut WordApp, ctx: &egui::Context) {
                 if leave_full_screen(app, key, modifiers, true) {
                     continue;
                 }
+                // Outline view: Tab demotes the current heading one level, Shift+Tab promotes
+                // (Word parity). Only when Tab has no other modifiers so e.g. Ctrl+Tab for tab
+                // navigation elsewhere still works.
+                if key == Key::Tab
+                    && !modifiers.command
+                    && !modifiers.ctrl
+                    && !modifiers.alt
+                    && !modifiers.mac_cmd
+                    && app.session.view.mode == wordcraft_layout::ViewMode::Outline
+                {
+                    let cmd = if modifiers.shift { "outline.promote" } else { "outline.demote" };
+                    let _ = app.run(cmd, json!({}));
+                    continue;
+                }
                 app.canvas.swallow_text = dispatch(app, key, modifiers) && modifiers.alt;
             }
             _ => {}
