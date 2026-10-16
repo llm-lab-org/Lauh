@@ -982,9 +982,10 @@ pub fn style_section(id: &str) -> StyleSection {
 /// mirrors the corresponding `w:style` in the source document's `styles.xml` (font sizes are
 /// in whole points; the OOXML half-point values are halved).
 ///
-///   - `QuranVerse`     — character run for Qur'anic quotations: Amiri Quran 12 pt, Islamic green
+///   - `QuranVerse`     — character run for Qur'anic quotations: Niloufaraneh 12 pt, Islamic green
 ///     (#006400). Added on top of the source template because Qur'anic verses conventionally use a
-///     distinct colour and a Qur'anic Naskh face.
+///     distinct colour; every style in this section uses Niloufaraneh so the Quran/Hadith text
+///     reads as a single typographic family and only colour / size / weight distinguish them.
 ///   - `HadithTitleL4`  — paragraph, bidi, Niloufaraneh 12 pt bold, red (#C00000), outline level 3.
 ///     The source asked for `B Lotus`; replaced with Niloufaraneh so the gallery previews render in
 ///     the bundled font rather than falling back.
@@ -1017,7 +1018,7 @@ fn hadith_styles() -> Vec<Style> {
             "Quran",
             39,
             CharProps {
-                font: Some("Amiri Quran".into()),
+                font: Some("Niloufaraneh".into()),
                 size: Some(12.0),
                 bold: Some(false),
                 italic: Some(false),
