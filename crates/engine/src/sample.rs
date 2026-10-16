@@ -31,7 +31,8 @@ pub fn sample_document() -> Document {
     title.props.bidi = Some(true);
     title.props.align = Some(Align::Right);
     b.push(Block::Para(title));
-    let mut subtitle = styled("The Opening — the first chapter of the Qur'an, seven verses", "Subtitle");
+    let mut subtitle = styled("الفاتحة — فاتحة الكتاب، سبع آيات", "Subtitle");
+    subtitle.props.bidi = Some(true);
     subtitle.props.align = Some(Align::Right);
     b.push(Block::Para(subtitle));
     let verses = [
