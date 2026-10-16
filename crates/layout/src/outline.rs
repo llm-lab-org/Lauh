@@ -132,13 +132,15 @@ fn plain_chars(c: &CharProps) -> CharProps {
 }
 
 /// The paragraph as the outline draws it: no indents, start-aligned, and in the Normal style
-/// without text formatting (`plain`).
+/// without text formatting (`plain`). RTL (bidi) paragraphs keep their direction and are
+/// right-aligned so Arabic/Persian headings read naturally in the outline.
 pub(crate) fn outline_para(doc: &Document, p: &Paragraph, plain: bool) -> Paragraph {
     let mut q = p.clone();
     q.props.indent_left = Some(0.0);
     q.props.indent_right = Some(0.0);
     q.props.indent_first = Some(0.0);
-    q.props.align = Some(Align::Left);
+    let rp = doc.styles.resolve_para(&p.props);
+    q.props.align = Some(if rp.bidi { Align::Right } else { Align::Left });
     q.props.page_break_before = Some(false);
     q.props.drop_cap = None;
     if plain {
@@ -156,14 +158,16 @@ pub(crate) fn outline_para(doc: &Document, p: &Paragraph, plain: bool) -> Paragr
     q
 }
 
-/// The symbol in front of a paragraph whose first line `pl` starts at (`x`, `y`) (the text's left
-/// edge): a circled plus or minus for a heading, a dot for body text; and a wavy line under a
-/// collapsed heading's first line.
-pub(crate) fn symbol_items(pl: &Arc<ParaLayout>, x: f32, y: f32, level: u8, children: bool, collapsed: bool) -> Vec<Placed> {
+/// The symbol in front of a paragraph whose first line `pl` starts at (`x`, `y`) (the text's
+/// start edge: left for LTR, right for RTL — but `x` is always the left of the text box):
+/// a circled plus or minus for a heading, a dot for body text; and a wavy line under a
+/// collapsed heading's first line. `width` is the paragraph's text column; `rtl` places the
+/// symbol gutter on the right instead of the left so bidi outlines read naturally.
+pub(crate) fn symbol_items(pl: &Arc<ParaLayout>, x: f32, y: f32, width: f32, level: u8, children: bool, collapsed: bool, rtl: bool) -> Vec<Placed> {
     let Some(first) = pl.lines.first() else { return Vec::new() };
     let asc = (first.baseline - first.top).max(4.0);
     let cy = y + asc * 0.62;
-    let cx = x - SYMBOL_W + 6.0;
+    let cx = if rtl { x + width + SYMBOL_W - 6.0 } else { x - SYMBOL_W + 6.0 };
     let mut out = Vec::new();
     let disc = |r: f32| Placed::Shape {
         rect: Rect::new(cx - r, cy - r, r * 2.0, r * 2.0),
@@ -190,10 +194,12 @@ pub(crate) fn symbol_items(pl: &Arc<ParaLayout>, x: f32, y: f32, level: u8, chil
     if collapsed {
         let w = first.xs.last().copied().unwrap_or(0.0).max(12.0);
         let by = y + (first.baseline - first.top) + 3.0;
+        // For RTL the wavy line sits under the right-aligned text, so it ends at the right edge.
+        let (x0, x1) = if rtl { (x + width - w, x + width) } else { (x, x + w) };
         out.push(Placed::Rule {
-            x0: x,
+            x0,
             y0: by,
-            x1: x + w,
+            x1,
             y1: by,
             border: Border { style: BorderStyle::Wave, width: 0.75, color: Some(SYMBOL_GREY), space: 0.0 },
         });
@@ -203,14 +209,23 @@ pub(crate) fn symbol_items(pl: &Arc<ParaLayout>, x: f32, y: f32, level: u8, chil
 
 impl DocLayout {
     /// The outline symbol at page point (`x`, `y`), as the body block it belongs to (Outline view:
-    /// clicking a symbol selects the heading and what is under it).
+    /// clicking a symbol selects the heading and what is under it). For a bidi (RTL) paragraph the
+    /// gutter sits to the right of the text's right edge; for LTR, in the gutter to its left.
     pub fn outline_symbol_at(&self, page: usize, x: f32, y: f32) -> Option<usize> {
         let page: &Page = self.pages.get(page)?;
         page.items.iter().find_map(|it| {
             let Placed::Lines { story: StoryRef::Body, path, para, l0: 0, x: lx, y: ly, .. } = it else { return None };
             let [block] = path.0.as_slice() else { return None };
             let first = para.lines.first()?;
-            let r = Rect::new(lx - SYMBOL_W, *ly, SYMBOL_W, first.height.max(8.0));
+            // RTL outline paragraphs are right-aligned, so their first line's `xs.last()` is at the
+            // right edge of the column — the symbol gutter starts there. LTR keeps the historical
+            // left-of-text gutter.
+            let r = if para.rp.bidi {
+                let right_edge = *lx + first.xs.last().copied().unwrap_or(0.0);
+                Rect::new(right_edge, *ly, SYMBOL_W, first.height.max(8.0))
+            } else {
+                Rect::new(lx - SYMBOL_W, *ly, SYMBOL_W, first.height.max(8.0))
+            };
             (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h).then_some(*block as usize)
         })
     }

@@ -3528,8 +3528,17 @@ fn place_outline_para(ctx: &mut Ctx, pb: &mut PageBuilder, p: &Paragraph, block:
     }
     let level = o.levels.get(block).copied().unwrap_or(outline::BODY);
     let indent = outline::indent(&o.levels, block);
-    let x = pb.col_x() + indent + outline::SYMBOL_W;
-    let width = (pb.col_w() - indent - outline::SYMBOL_W).max(72.0);
+    let rtl = ctx.doc.styles.resolve_para(&p.props).bidi;
+    // LTR: text column is shifted right by [indent + SYMBOL_W], symbol gutter on the left.
+    // RTL: text column stays at col_x() so the right-aligned text sits where its headings read
+    // naturally; indent eats width from the left; symbol gutter sits on the right.
+    let (x, width) = if rtl {
+        let w = (pb.col_w() - indent - outline::SYMBOL_W).max(72.0);
+        (pb.col_x(), w)
+    } else {
+        let w = (pb.col_w() - indent - outline::SYMBOL_W).max(72.0);
+        (pb.col_x() + indent + outline::SYMBOL_W, w)
+    };
     let q = outline::outline_para(ctx.doc, p, o.view.plain);
     ctx.fields.page = pb.number;
     let pl = ctx.para_labelled(&q, width, None, &[], label);
@@ -3550,7 +3559,7 @@ fn place_outline_para(ctx: &mut Ctx, pb: &mut PageBuilder, p: &Paragraph, block:
     let children = level < outline::BODY && outline::has_children(&o.levels, block);
     // Collapsed, or with something under it hidden by Show Level: the wavy line says so.
     let collapsed = children && o.hidden.get(block + 1).copied().unwrap_or(false);
-    items.extend(outline::symbol_items(&pl, x, y, level, children, collapsed));
+    items.extend(outline::symbol_items(&pl, x, y, width, level, children, collapsed, rtl));
     if let Some(pg) = pb.page() {
         for (i, it) in behind.into_iter().enumerate() {
             pg.items.insert(i.min(pg.items.len()), it);
