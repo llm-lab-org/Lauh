@@ -809,7 +809,10 @@ fn outline_step(s: &mut Session, promote: bool) -> CmdResult {
             (None, Some(h)) if promote => h.checked_sub(1).filter(|l| *l >= 1),
             (None, Some(h)) => Some(h + 1).filter(|l| *l <= 9),
             (None, None) if promote => Some(before),
-            (None, None) => None,
+            // Demote body text: become a heading one level deeper than the preceding heading,
+            // capped at 9 so there's always a heading to produce (Word parity: Tab on body text
+            // in Outline view converts it to a sub-heading rather than being a no-op).
+            (None, None) => Some((before + 1).min(9)),
         };
         let Some(n) = target else { continue };
         let id = ensure_heading_style(s, n);
