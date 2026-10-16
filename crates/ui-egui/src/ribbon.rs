@@ -1998,6 +1998,19 @@ fn outlining(app: &mut WordApp, ui: &mut Ui) {
             });
         });
     });
+    // Text direction toggles in the Outlining tab too — Lauh is RTL-first, so a user working in
+    // outline on an Arabic/Persian document shouldn't have to leave the tab to flip a paragraph's
+    // direction.
+    group(ui, "Direction", None, app, |ui, app| {
+        let rp = app.session.doc.para_at(&app.session.sel.focus).map(|p| app.session.doc.styles.resolve_para(&p.props));
+        let rtl = rp.as_ref().is_some_and(|r| r.bidi);
+        stack(ui, |ui| {
+            crate::widgets::row(ui, |ui| {
+                small(ui, app, "textLtr", None, "Left-to-Right Text Direction", "para.ltr", json!({}), !rtl);
+                small(ui, app, "textRtl", None, "Right-to-Left Text Direction", "para.rtl", json!({}), rtl);
+            });
+        });
+    });
     group(ui, "Close", None, app, |ui, app| {
         big(ui, app, "closeOutline", "Close Outline\nView", "outline.close", json!({}), false);
     });
