@@ -34,9 +34,11 @@ pub fn specs() -> Vec<CommandSpec> {
         })
         .params(r#"{"value": "left|center|right|justify|distribute (as seen on the page) | start|end (reading direction)"}"#),
         CommandSpec::new("para.rtl", "Right-to-Left Text Direction", "Home › Paragraph", |s, v| direction(s, v, true))
-            .params(r#"{"value"?: bool (false = left to right)}"#),
+            .params(r#"{"value"?: bool (false = left to right)}"#)
+            .key("Mod+Shift+Alt+R"),
         CommandSpec::new("para.ltr", "Left-to-Right Text Direction", "Home › Paragraph", |s, v| direction(s, v, false))
-            .params(r#"{"value"?: bool (false = right to left)}"#),
+            .params(r#"{"value"?: bool (false = right to left)}"#)
+            .key("Mod+Shift+Alt+L"),
         CommandSpec::new("para.indent", "Increase Indent", "Home › Paragraph", indent).key("Mod+M"),
         CommandSpec::new("para.outdent", "Decrease Indent", "Home › Paragraph", outdent).key("Mod+Shift+M"),
         CommandSpec::new("para.hangingIndent", "Hanging Indent", "Home › Paragraph › Paragraph", |s, _| {

@@ -266,6 +266,14 @@ fn content(app: &mut WordApp, ui: &mut egui::Ui, t: &Tokens) {
         widgets::small(ui, app, "alignCenter", None, "Center", "para.alignCenter", json!({}), align == A::Center);
         widgets::small(ui, app, "alignRight", None, "Align Right", "para.alignRight", json!({}), align == A::Right);
         widgets::small(ui, app, "justify", None, "Justify", "para.justify", json!({}), align == A::Justify);
+        sep(ui, t);
+
+        // Text direction (LTR / RTL) — on the mini toolbar so Arabic/Persian typing is one click
+        // away without finding the Home ribbon's Paragraph group.
+        let rp = app.session.doc.para_at(&app.session.sel.focus).map(|p| app.session.doc.styles.resolve_para(&p.props));
+        let rtl = rp.as_ref().is_some_and(|r| r.bidi);
+        widgets::small(ui, app, "textLtr", None, "Left-to-Right Text Direction", "para.ltr", json!({}), !rtl);
+        widgets::small(ui, app, "textRtl", None, "Right-to-Left Text Direction", "para.rtl", json!({}), rtl);
     });
 }
 
