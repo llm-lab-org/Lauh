@@ -782,15 +782,19 @@ fn outline_step(s: &mut Session, promote: bool) -> CmdResult {
     let carried = super::outline::hidden_subheadings(s);
     let (a, b) = s.sel.ordered();
     let paths = s.doc.paths_between(&a, &b);
-    // The heading before the selection, for promoted body text.
-    let before = s
+    // The last heading before the selection, if any. For promoted body text its level becomes the
+    // body's new heading; for demoted body text we go one deeper. Without a prior heading at all,
+    // demoting a body paragraph puts it at Heading 1 (the top level), not Heading 2 — otherwise
+    // typing the very first item in a new document and pressing Tab would inject a Heading 2
+    // above everything, which looks like "the top node got indented".
+    let before_heading: Option<u8> = s
         .doc
         .para_paths(a.story)
         .into_iter()
         .take_while(|p| *p < a.path)
         .filter_map(|p| s.doc.para(a.story, &p).and_then(|q| heading_level(s, &q.props)))
-        .last()
-        .unwrap_or(1);
+        .last();
+    let before = before_heading.unwrap_or(1);
     let mut changed = false;
     for path in paths {
         let Some(p) = s.doc.para(a.story, &path) else { continue };
@@ -810,9 +814,8 @@ fn outline_step(s: &mut Session, promote: bool) -> CmdResult {
             (None, Some(h)) => Some(h + 1).filter(|l| *l <= 9),
             (None, None) if promote => Some(before),
             // Demote body text: become a heading one level deeper than the preceding heading,
-            // capped at 9 so there's always a heading to produce (Word parity: Tab on body text
-            // in Outline view converts it to a sub-heading rather than being a no-op).
-            (None, None) => Some((before + 1).min(9)),
+            // capped at 9. With no prior heading, land on Heading 1 (top-level), not Heading 2.
+            (None, None) => Some(before_heading.map_or(1, |h| (h + 1).min(9))),
         };
         let Some(n) = target else { continue };
         let id = ensure_heading_style(s, n);
