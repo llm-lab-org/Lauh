@@ -64,7 +64,10 @@ fn rename(s: &mut Session, v: &Value) -> CmdResult {
 pub fn specs() -> Vec<CommandSpec> {
     vec![
         CommandSpec::new("file.rename", "Rename Document", "File › Info", rename).params(r#"{"name": string (document name without its extension)}"#).pure(),
-        CommandSpec::new("file.new", "New", "File", new).key("Mod+N").params(r#"{"template"?: "blank|sample"}"#).pure(),
+        CommandSpec::new("file.new", "New", "File", new)
+            .key("Mod+N")
+            .params(r#"{"template"?: "blank|sample|hadith|tafsir|khutbah|arabicPaper|arabicLetter|letter|resume|report|memo|newsletter|flyer"}"#)
+            .pure(),
         CommandSpec::new("file.open", "Open", "File", open)
             .key("Mod+O / Mod+F12 / Mod+Alt+F2")
             .params(r#"{"path": string, "data"?: base64 (the file's bytes; `path` then only names it), "password"?: string (for a password-protected Word document)}"#)
@@ -180,6 +183,17 @@ fn privacy(s: &Session) -> Value {
 fn new(s: &mut Session, v: &Value) -> CmdResult {
     let doc = match p::str(v, "template").unwrap_or("blank") {
         "sample" => crate::sample::sample_document(),
+        "hadith" => crate::sample::hadith_paper(),
+        "tafsir" => crate::sample::quran_commentary(),
+        "khutbah" => crate::sample::khutbah(),
+        "arabicPaper" => crate::sample::arabic_paper(),
+        "arabicLetter" => crate::sample::arabic_letter(),
+        "letter" => crate::sample::letter(),
+        "resume" => crate::sample::resume(),
+        "report" => crate::sample::report(),
+        "memo" => crate::sample::memo(),
+        "newsletter" => crate::sample::newsletter(),
+        "flyer" => crate::sample::flyer(),
         _ => normal_document(s),
     };
     s.set_document(doc);

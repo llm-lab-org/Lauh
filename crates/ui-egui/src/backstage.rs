@@ -262,10 +262,24 @@ fn template_tile(ui: &mut Ui, app: &mut WordApp, label: &str, template: &str) {
 }
 
 /// The built-in templates in gallery order: display label and the `file.new` template id.
-const TEMPLATES: [(&str, &str); 2] = [("Blank document", "blank"), ("Surah Al-Fatiha (sample)", "sample")];
+/// Arabic / RTL templates first (Lauh's focus), then the English/LTR classics.
+const TEMPLATES: [(&str, &str); 12] = [
+    ("Blank document", "blank"),
+    ("Surah Al-Fatiha (sample)", "sample"),
+    ("Hadith paper", "hadith"),
+    ("Qur'an commentary (tafsir)", "tafsir"),
+    ("Khutbah (sermon)", "khutbah"),
+    ("Arabic academic paper", "arabicPaper"),
+    ("Arabic letter", "arabicLetter"),
+    ("Letter", "letter"),
+    ("Résumé", "resume"),
+    ("Report", "report"),
+    ("Memo", "memo"),
+    ("Newsletter", "newsletter"),
+];
 
 /// How many templates Home shows before "More templates" (the rest are on New).
-const HOME_TEMPLATES: usize = 2;
+const HOME_TEMPLATES: usize = 5;
 
 /// The templates whose English or translated label, or id, contains `query` (case-insensitive;
 /// the id lets "resume" find "Résumé"); all of them for an empty query.
@@ -594,9 +608,10 @@ mod tests {
     #[test]
     fn template_search_matches_labels_case_insensitively() {
         let ids = |q: &str| matching_templates(q).into_iter().map(|(_, id)| id).collect::<Vec<_>>();
-        assert_eq!(ids(""), ["blank", "sample"]);
+        assert_eq!(ids("").len(), 12, "all built-in templates");
         assert_eq!(ids("  BLANK "), ["blank"]);
         assert_eq!(ids("fatiha"), ["sample"]);
+        assert_eq!(ids("letter"), ["arabicLetter", "letter"]);
         assert!(ids("no such template").is_empty());
     }
 
