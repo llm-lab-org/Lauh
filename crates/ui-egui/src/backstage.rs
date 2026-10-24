@@ -261,33 +261,43 @@ fn template_tile(ui: &mut Ui, app: &mut WordApp, label: &str, template: &str) {
     });
 }
 
-/// The built-in templates in gallery order: display label and the `file.new` template id.
-/// Arabic / RTL templates first (Lauh's focus), then the English/LTR classics.
-const TEMPLATES: [(&str, &str); 12] = [
-    ("Blank document", "blank"),
-    ("Surah Al-Fatiha (sample)", "sample"),
-    ("Hadith paper", "hadith"),
-    ("Qur'an commentary (tafsir)", "tafsir"),
-    ("Khutbah (sermon)", "khutbah"),
-    ("Arabic academic paper", "arabicPaper"),
-    ("Arabic letter", "arabicLetter"),
-    ("Letter", "letter"),
-    ("Résumé", "resume"),
-    ("Report", "report"),
-    ("Memo", "memo"),
-    ("Newsletter", "newsletter"),
+/// The built-in templates in gallery order: display label, the `file.new` template id, and
+/// the display category. Arabic / RTL templates come first (Lauh's focus), then the English
+/// classics; the New page renders them grouped by category.
+const TEMPLATES: [(&str, &str, &str); 12] = [
+    // Quick start
+    ("Blank document", "blank", "Quick start"),
+    ("Surah Al-Fatiha (sample)", "sample", "Quick start"),
+    // Qur'an & Hadith
+    ("Hadith paper", "hadith", "Qur'an & Hadith"),
+    ("Qur'an commentary (tafsir)", "tafsir", "Qur'an & Hadith"),
+    ("Khutbah (sermon)", "khutbah", "Qur'an & Hadith"),
+    // Arabic documents
+    ("Arabic academic paper", "arabicPaper", "Arabic documents"),
+    ("Arabic letter", "arabicLetter", "Arabic documents"),
+    // Letters & memos (English)
+    ("Letter", "letter", "Letters & memos"),
+    ("Memo", "memo", "Letters & memos"),
+    // Reports & résumés
+    ("Report", "report", "Reports & résumés"),
+    ("Résumé", "resume", "Reports & résumés"),
+    // Publications
+    ("Newsletter", "newsletter", "Publications"),
 ];
+
+/// Category order on the New page.
+const CATEGORIES: [&str; 5] = ["Quick start", "Qur'an & Hadith", "Arabic documents", "Letters & memos", "Reports & résumés"];
 
 /// How many templates Home shows before "More templates" (the rest are on New).
 const HOME_TEMPLATES: usize = 5;
 
 /// The templates whose English or translated label, or id, contains `query` (case-insensitive;
 /// the id lets "resume" find "Résumé"); all of them for an empty query.
-fn matching_templates(query: &str) -> Vec<(&'static str, &'static str)> {
+fn matching_templates(query: &str) -> Vec<(&'static str, &'static str, &'static str)> {
     let q = query.trim().to_lowercase();
     TEMPLATES
         .into_iter()
-        .filter(|(label, id)| {
+        .filter(|(label, id, _)| {
             q.is_empty() || id.contains(&q) || label.to_lowercase().contains(&q) || crate::i18n::tc("template", label).to_lowercase().contains(&q)
         })
         .collect()
@@ -309,7 +319,7 @@ fn home_page(app: &mut WordApp, ui: &mut Ui) {
     );
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing = vec2(18.0, 0.0);
-        for (label, template) in TEMPLATES.into_iter().take(HOME_TEMPLATES) {
+        for (label, template, _) in TEMPLATES.into_iter().take(HOME_TEMPLATES) {
             template_tile(ui, app, label, template);
         }
     });
@@ -322,7 +332,9 @@ fn home_page(app: &mut WordApp, ui: &mut Ui) {
     open_list(app, ui);
 }
 
-/// New: the whole template gallery with a search box; no Recent list (that is on Home and Open).
+/// New: the whole template gallery organised into categories, with a search box above that
+/// filters across all categories. The matching templates render in a single flat group when a
+/// query is present (search results feel out of place when sectioned).
 fn new_page(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     heading(ui, "New");
@@ -338,12 +350,34 @@ fn new_page(app: &mut WordApp, ui: &mut Ui) {
         ui.label(egui::RichText::new(tl!("No templates match your search.")).color(t.text_dim));
         return;
     }
-    ui.horizontal_wrapped(|ui| {
-        ui.spacing_mut().item_spacing = vec2(18.0, 18.0);
-        for (label, template) in found {
-            template_tile(ui, app, label, template);
+    // Searching → flat grid, so results feel like results. Browsing → grouped by category.
+    if !query.trim().is_empty() {
+        ui.horizontal_wrapped(|ui| {
+            ui.spacing_mut().item_spacing = vec2(18.0, 18.0);
+            for (label, template, _) in found {
+                template_tile(ui, app, label, template);
+            }
+        });
+        return;
+    }
+    for category in CATEGORIES {
+        let group: Vec<_> = TEMPLATES.into_iter().filter(|(_, _, c)| *c == category).collect();
+        if group.is_empty() {
+            continue;
         }
-    });
+        ui.add_space(6.0);
+        ui.label(egui::RichText::new(tl!(category)).font(semibold(14.5)).color(t.text));
+        ui.add_space(4.0);
+        ui.separator();
+        ui.add_space(8.0);
+        ui.horizontal_wrapped(|ui| {
+            ui.spacing_mut().item_spacing = vec2(18.0, 18.0);
+            for (label, template, _) in group {
+                template_tile(ui, app, label, template);
+            }
+        });
+        ui.add_space(20.0);
+    }
 }
 
 fn open_list(app: &mut WordApp, ui: &mut Ui) {
@@ -607,7 +641,7 @@ mod tests {
 
     #[test]
     fn template_search_matches_labels_case_insensitively() {
-        let ids = |q: &str| matching_templates(q).into_iter().map(|(_, id)| id).collect::<Vec<_>>();
+        let ids = |q: &str| matching_templates(q).into_iter().map(|(_, id, _)| id).collect::<Vec<_>>();
         assert_eq!(ids("").len(), 12, "all built-in templates");
         assert_eq!(ids("  BLANK "), ["blank"]);
         assert_eq!(ids("fatiha"), ["sample"]);
